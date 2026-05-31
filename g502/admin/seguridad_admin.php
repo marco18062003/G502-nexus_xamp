@@ -16,9 +16,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_rol'] !== 'administrador') {
 
 // Configuracion para XAMPP y tu DB 'dios1'
 define('DB_HOST', 'localhost');
-define('DB_USER', 'u584797177_Marco');        // <-- ¡¡CORREGIDO A root!!
-define('DB_PASS', 'Grupoexito2025@');       
-define('DB_NAME', 'u584797177_dios1');   // <-- ¡¡CORREGIDO A dios1!!
+define('DB_USER', 'root');        // <-- ¡¡CORREGIDO A root!!
+define('DB_PASS', '');       
+define('DB_NAME', 'dios2');   // <-- ¡¡CORREGIDO A dios1!!
 
 // Crear la conexión
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);

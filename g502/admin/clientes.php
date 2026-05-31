@@ -51,7 +51,7 @@ $usuarios = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     <thead>
                         <tr>
                             <th class="ps-4">ID</th>
-                            <th>Usuario / Nombre</th>
+                            <th>Usuario o Nombre</th>
                             <th>Contacto</th>
                             <th>Ubicación</th>
                             <th>Rol</th>
