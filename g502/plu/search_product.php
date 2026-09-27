@@ -2,21 +2,24 @@
 require_once '../config/db.php';
 
 if (isset($_GET['query'])) {
-    $searchTerm = mysqli_real_escape_string($conn, $_GET['query']);
-    
-    // We search by 'codigo' (your PLU) or 'nombre' (the name)
-    $sql = "SELECT codigo, nombre FROM panaderia 
-            WHERE codigo LIKE '%$searchTerm%' OR nombre LIKE '%$searchTerm%' 
-            LIMIT 6";
-    
-    $result = $conn->query($sql);
-    $suggestions = [];
+    $searchTerm = '%' . $_GET['query'] . '%';
 
-    if ($result->num_rows > 0) {
+    $sql = "SELECT PLU, NOMBRE, EAN FROM Hoja1 
+            WHERE PLU LIKE ? OR NOMBRE LIKE ? OR EAN LIKE ?
+            LIMIT 6";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('sss', $searchTerm, $searchTerm, $searchTerm);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $suggestions = [];
+    if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $suggestions[] = [
-                'plu' => $row['codigo'],
-                'name' => $row['nombre']
+                'plu'  => $row['PLU'],
+                'name' => $row['NOMBRE'],
+                'ean'  => $row['EAN']
             ];
         }
     }

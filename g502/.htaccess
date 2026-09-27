@@ -13,6 +13,5 @@ RewriteRule ^(.+)$ $1.php [L]
 DirectoryIndex index.php
 
 <Files "keys.php">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </Files>

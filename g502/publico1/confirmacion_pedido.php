@@ -3,84 +3,157 @@
 
 session_start();
 
-// 1. Configuración de errores para desarrollo (Recuerda cambiar a 0 en producción)
-ini_set('display_errors', 1); 
-ini_set('display_startup_errors', 1); 
+// 1. En producción NUNCA mostramos errores al usuario; los registramos en el log.
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 error_reporting(E_ALL);
 
-// Incluir el archivo de conexión a la base de datos
 require_once '../config/db.php'; // ASEGÚRATE DE QUE ESTA RUTA ES CORRECTA
 
 $order_id = 'N/A'; // Valor por defecto
+$metodo_pago = 'efectivo'; // Valor por defecto, se sobreescribe abajo
 
-// Asegúrate de que el método de la solicitud sea POST
+/**
+ * Muestra un error genérico al usuario y registra el detalle real en el log del servidor.
+ */
+function fallar_pedido(string $logMessage, string $userMessage = 'Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo.'): void {
+    error_log('[confirmacion_pedido] ' . $logMessage);
+    http_response_code(400);
+    die(htmlspecialchars($userMessage));
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // 2. Recuperar información del cliente del formulario y sanear
-    $nombre_cliente = mysqli_real_escape_string($conn, $_POST['nombre_cliente'] ?? '');
-    $email_cliente = mysqli_real_escape_string($conn, $_POST['email_cliente'] ?? '');
-    $telefono_cliente = mysqli_real_escape_string($conn, $_POST['telefono_cliente'] ?? '');
-    $direccion_cliente = mysqli_real_escape_string($conn, $_POST['direccion_cliente'] ?? '');
-    $ciudad_cliente = mysqli_real_escape_string($conn, $_POST['ciudad_cliente'] ?? '');
-
-    if (empty($nombre_cliente) || empty($email_cliente) || empty($telefono_cliente) || empty($direccion_cliente) || empty($ciudad_cliente)) {
-        die("Error: Faltan datos del cliente. Por favor, completa todos los campos.");
+    // 2. Validación de CSRF: el token debe coincidir con el generado en ver_carrito.php
+    $csrfToken = $_POST['csrf_token'] ?? '';
+    if (empty($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $csrfToken)) {
+        fallar_pedido('CSRF token inválido o ausente.', 'Tu sesión expiró o la solicitud no es válida. Por favor, vuelve al carrito e inténtalo de nuevo.');
     }
 
-    // 3. Recuperar información del carrito de la sesión
-    $cartItems = $_SESSION['cart'] ?? [];
+    // 3. Recuperar y validar datos del cliente
+    $nombre_cliente    = trim($_POST['nombre_cliente'] ?? '');
+    $email_cliente     = trim($_POST['email_cliente'] ?? '');
+    $telefono_cliente  = trim($_POST['telefono_cliente'] ?? '');
+    $direccion_cliente = trim($_POST['direccion_cliente'] ?? '');
+    $ciudad_cliente    = trim($_POST['ciudad_cliente'] ?? '');
+
+    if ($nombre_cliente === '' || $email_cliente === '' || $telefono_cliente === '' || $direccion_cliente === '' || $ciudad_cliente === '') {
+        fallar_pedido('Faltan campos requeridos del cliente.', 'Por favor, completa todos los campos del formulario.');
+    }
+
+    if (!filter_var($email_cliente, FILTER_VALIDATE_EMAIL)) {
+        fallar_pedido("Email inválido: $email_cliente", 'El correo electrónico ingresado no es válido.');
+    }
+
+    if (!preg_match('/^[0-9+ ]{7,15}$/', $telefono_cliente)) {
+        fallar_pedido("Teléfono inválido: $telefono_cliente", 'El número de teléfono ingresado no es válido.');
+    }
+
+    if (mb_strlen($nombre_cliente) > 150 || mb_strlen($direccion_cliente) > 255 || mb_strlen($ciudad_cliente) > 100) {
+        fallar_pedido('Uno o más campos exceden la longitud permitida.', 'Uno de los campos ingresados es demasiado largo.');
+    }
+
+    // 3b. Validar método de pago (whitelist estricta, nunca confiar en el valor crudo del POST)
+    $metodo_pago = $_POST['metodo_pago'] ?? 'efectivo';
+    if (!in_array($metodo_pago, ['efectivo', 'wompi'], true)) {
+        fallar_pedido("Método de pago inválido: $metodo_pago", 'El método de pago seleccionado no es válido.');
+    }
+
+    // 4. Recuperar y normalizar el carrito de la sesión
+    $rawCart = $_SESSION['cart'] ?? [];
+    if (empty($rawCart) || !is_array($rawCart)) {
+        fallar_pedido('El carrito está vacío al intentar confirmar el pedido.', 'Tu carrito está vacío. Agrega productos antes de continuar.');
+    }
+
+    $cartItems = [];
+    foreach ($rawCart as $cartKey => $item) {
+        $price    = isset($item['price']) ? (float) $item['price'] : 0;
+        $quantity = isset($item['quantity']) ? max(1, (int) $item['quantity']) : 0;
+        $name     = trim($item['name'] ?? '');
+
+        // IMPORTANTE: el ID real del producto NO siempre es la clave del arreglo.
+        // Los ítems agregados desde ofertas.php usan claves tipo "oferta_3", así
+        // que el producto_id verdadero viene guardado dentro del propio ítem
+        // (ver add_to_cart.php y add_to_cart_oferta.php).
+        $productoIdReal = isset($item['producto_id']) && is_numeric($item['producto_id'])
+            ? (int) $item['producto_id']
+            : (is_numeric($cartKey) ? (int) $cartKey : 0);
+
+        // Si un ítem llega corrupto (sin nombre, precio inválido, cantidad 0, o sin
+        // un producto_id real resoluble) no lo incluimos para evitar romper la
+        // inserción en detalle_pedido (posible violación de llave foránea).
+        if ($name === '' || $price <= 0 || $quantity <= 0 || $productoIdReal <= 0) {
+            error_log("[confirmacion_pedido] Ítem de carrito descartado por datos inválidos. Clave: $cartKey, producto_id resuelto: $productoIdReal");
+            continue;
+        }
+
+        $cartItems[] = [
+            'producto_id'    => $productoIdReal,
+            'name'           => $name,
+            'caracteristica' => $item['caracteristica'] ?? '',
+            'price'          => $price,
+            'quantity'       => $quantity,
+        ];
+    }
 
     if (empty($cartItems)) {
-        die("Error: El carrito está vacío. No se puede procesar un pedido sin productos.");
+        fallar_pedido('Todos los ítems del carrito eran inválidos tras la normalización.', 'Tu carrito no contiene productos válidos. Por favor, revísalo e inténtalo de nuevo.');
     }
 
+    $costo_domicilio = 0; // Debe coincidir con el valor mostrado en ver_carrito.php
     $totalCartPrice = 0;
     foreach ($cartItems as $item) {
-        $totalCartPrice += (float)($item['price'] * $item['quantity']);
+        $totalCartPrice += $item['price'] * $item['quantity'];
     }
-    
-    // Asumimos un id_cliente dummy (0) si no tienes registro de usuarios
-// Use logged-in user ID if available, otherwise 0 for guests
-$id_cliente = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 
-              (isset($_POST['id_cliente']) ? (int)$_POST['id_cliente'] : 0);
+    $totalCartPrice += $costo_domicilio;
 
-    // Iniciar una transacción de base de datos
+    // 5. id_cliente: solo confiamos en la sesión, NUNCA en un valor enviado por el cliente.
+    $id_cliente = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0;
+
+    // 5b. Si el pago es con Wompi, generamos una referencia única AHORA, antes de guardar,
+    //     para poder buscarla luego cuando el webhook confirme el pago.
+    $referenciaPago = null;
+    $estadoPago = 'no_aplica'; // efectivo: se paga contra entrega, no hay estado de pago que rastrear
+    if ($metodo_pago === 'wompi') {
+        $referenciaPago = 'PEDIDO_' . time() . '_' . bin2hex(random_bytes(3));
+        $estadoPago = 'pendiente';
+    }
+
     mysqli_begin_transaction($conn);
 
     try {
-        // 4. Insertar el pedido en la tabla 'pedidos'
-        // *** CAMBIO CRUCIAL: Se añaden id_cliente, total, total_pedido, y estado_pedido (pendiente) ***
+        // 6. Insertar el pedido en la tabla 'pedidos'
         $sql_pedido = "INSERT INTO pedidos 
-                       (id_cliente, nombre_cliente, email_cliente, telefono_cliente, direccion_cliente, ciudad_cliente, total_final, total_pedido, fecha_pedido, estado_pedido) 
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'pendiente')";
-                       
+                       (id_cliente, nombre_cliente, email_cliente, telefono_cliente, direccion_cliente, ciudad_cliente, total_final, total_pedido, fecha_pedido, estado_pedido, metodo_pago, referencia_pago, estado_pago) 
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'pendiente', ?, ?, ?)";
+
         $stmt_pedido = mysqli_prepare($conn, $sql_pedido);
         if (!$stmt_pedido) {
             throw new Exception("Error al preparar la consulta de pedido: " . mysqli_error($conn));
         }
-        
-        // Tipos de datos: i (id_cliente), sssss (datos cliente), dd (totales)
-        mysqli_stmt_bind_param($stmt_pedido, "isssssdd", 
-            $id_cliente, 
-            $nombre_cliente, 
-            $email_cliente, 
-            $telefono_cliente, 
-            $direccion_cliente, 
-            $ciudad_cliente, 
-            $totalCartPrice, // Columna 'total'
-            $totalCartPrice  // Columna 'total_pedido'
+
+        mysqli_stmt_bind_param($stmt_pedido, "isssssddsss",
+            $id_cliente,
+            $nombre_cliente,
+            $email_cliente,
+            $telefono_cliente,
+            $direccion_cliente,
+            $ciudad_cliente,
+            $totalCartPrice,
+            $totalCartPrice,
+            $metodo_pago,
+            $referenciaPago,
+            $estadoPago
         );
-        
+
         if (!mysqli_stmt_execute($stmt_pedido)) {
             throw new Exception("Error al ejecutar la inserción del pedido: " . mysqli_stmt_error($stmt_pedido));
         }
 
-        $order_id = mysqli_insert_id($conn); // Obtener el ID del pedido
+        $order_id = mysqli_insert_id($conn);
+        mysqli_stmt_close($stmt_pedido);
 
-        mysqli_stmt_close($stmt_pedido); 
-
-        // 5. Insertar los detalles del pedido en la tabla 'detalle_pedido'
-        // Se ha corregido la cadena de tipos de bind_param.
+        // 7. Insertar los detalles del pedido
         $sql_detalle = "INSERT INTO detalle_pedido (id_pedido, id_producto, nombre_producto, caracteristica, cantidad, precio_unitario, total) 
                         VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt_detalle = mysqli_prepare($conn, $sql_detalle);
@@ -88,216 +161,70 @@ $id_cliente = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] :
             throw new Exception("Error al preparar la consulta de detalle de pedido: " . mysqli_error($conn));
         }
 
-        foreach ($cartItems as $productId => $item) {
-            $prod_id = (int)$productId; 
-            $caracteristica_value = $item['caracteristica'] ?? ''; // Usamos string vacío si no existe
-            $line_total = (float)($item['price'] * $item['quantity']); // Total de la línea
-            
-            // Tipos: i (id_pedido), i (id_producto), s (nombre), s (caracteristica), i (cantidad), d (precio_unitario), d (total_linea)
-            mysqli_stmt_bind_param($stmt_detalle, "iissidd", 
-                $order_id, 
-                $prod_id, 
-                $item['name'], 
-                $caracteristica_value, 
-                $item['quantity'], 
-                $item['price'], 
+        foreach ($cartItems as $item) {
+            $prod_id     = $item['producto_id'];
+            $line_total  = $item['price'] * $item['quantity'];
+
+            mysqli_stmt_bind_param($stmt_detalle, "iissidd",
+                $order_id,
+                $prod_id,
+                $item['name'],
+                $item['caracteristica'],
+                $item['quantity'],
+                $item['price'],
                 $line_total
             );
-            
+
             if (!mysqli_stmt_execute($stmt_detalle)) {
                 throw new Exception("Error al ejecutar la inserción del detalle: " . mysqli_stmt_error($stmt_detalle));
             }
         }
 
-        mysqli_stmt_close($stmt_detalle); 
-
-        // Si todo fue exitoso, confirmar la transacción
+        mysqli_stmt_close($stmt_detalle);
         mysqli_commit($conn);
 
-        // 6. Vaciar el carrito después de un pedido exitoso
+        // 8. Vaciar el carrito y rotar el token CSRF tras un pedido exitoso.
         unset($_SESSION['cart']);
+        unset($_SESSION['csrf_token']);
+
+        // 8b. Si es Wompi, redirigimos a la pantalla de pago.
+        if ($metodo_pago === 'wompi') {
+            header('Location: pagar_pedido_tienda.php?ref=' . urlencode($referenciaPago));
+            exit;
+        }
 
     } catch (Exception $e) {
-        // Si hay algún error, revertir la transacción
         mysqli_rollback($conn);
-        error_log("Error al guardar el pedido: " . $e->getMessage());
-        // Muestra un mensaje detallado SÓLO durante el desarrollo:
-        $errorMessage = "Hubo un error al procesar tu pedido. Inténtalo de nuevo. Error: " . $e->getMessage();
-        die($errorMessage); 
-    } finally {
-        mysqli_close($conn);
+        fallar_pedido('Error al guardar el pedido: ' . $e->getMessage());
     }
+    // Nota: no cerramos $conn aquí a propósito — includes/header.php reutiliza
+    // esta misma conexión más abajo. PHP la cierra automáticamente al terminar el script.
 
-} 
-// El resto del script sigue mostrando la página de confirmación HTML
+}
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedido Confirmado - Don Jorgito</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="estilosbuscar.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="styleme.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="../publico1/assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="../publico1/assets/css/styleme.css">
-    <style>
-        /* ... (tus estilos CSS) ... */
-        .confirmation-container {
-            max-width: 700px;
-            margin: 80px auto;
-            padding: 30px;
-            background-color: #fff;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            border-radius: 10px;
-            text-align: center;
-        }
-        .confirmation-container h1 {
-            color: #28a745;
-            margin-bottom: 20px;
-            font-size: 2.5em;
-        }
-        .confirmation-container p {
-            font-size: 1.1em;
-            color: #555;
-            margin-bottom: 15px;
-        }
-        .confirmation-container .order-id {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #007bff;
-        }
-        .confirmation-container .btn-continue {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 1.1em;
-            margin-top: 30px;
-            display: inline-block;
-        }
-        .confirmation-container .btn-continue:hover {
-            background-color: #0056b3;
-        }
-        .fas.fa-check-circle {
-            font-size: 4em;
-            color: #28a745;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <header class="main-header">
-    <div class="header-content">
-        <div class="header-logo">
-            <a href="index.php">
-               <img src="../images/logo1.png" alt="Tu Logo" width="200" height="100">
-            </a>
-        </div>
+<?php include 'includes/header.php'; ?>
+<link rel="stylesheet" type="text/css" href="assets/css/confirmacion_pedido.css">
 
-        <div class="header-slogan" sty>
-            <span> ;) </span>
-        </div>
+<main class="container">
+    <div class="confirmation-container">
+        <i class="fas fa-check-circle"></i>
+        <h1>¡Pedido Confirmado!</h1>
 
-      <div class="header-dropdown-menu">
-        <form id="categoryForm" action="buscar.php" method="GET">
-           <select class="category-select" name="query" aria-label="Seleccionar categoría" style="background-color:#232f3e;color:#f8f8f8" onchange="this.form.submit()">
-             <option selected value="all">Categorías</option>
-             <option value="cerveza">Cerveza</option>
-             <option value="aguardiente">Aguardiente</option>
-             <option value="ron">Ron</option>
-             <option value="whisky">Whisky</option>
-             <option value="vinos">Vinos</option>
-             <option value="cremas">Cremas de whisky</option>
-             <option value="cigarrillos">Cigarrillos</option>
-             <option value="comestibles">Comestibles</option>
-             <option value="otros">Otros</option>
-           </select>
-        </form>
-      </div>
-
-        <div class="header-search">
-          <form action="buscar.php" method="GET">
-               <div class="search-container">
-             <input type="text" placeholder="Buscar productos..." name="query" class="search-input">
-             <button type="submit" class="search-icon">
-                 <i class="fas fa-search"></i> </button>
-               </div>
-          </form>
-        </div>
-
-
-        <div class="header-user-actions" >
-            <a href="login.php" class="action-item" style="color:#333" aria-label="Mi Cuenta">
-     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user" style="color:#333">
-         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-         <circle cx="12" cy="7" r="4"></circle>
-     </svg>
-     <span>Cuenta</span>
-</a>
-            <a href="donjorgito.php" class="action-item" aria-label="Mis Favoritos" style="color:#333">
-                 <svg xmlns="http://www.w3.org/2000/svg" style="color:#333" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
-                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                 </svg>
-                 <span>Favoritos</span>
-            </a>
-            <a href="ver_carrito.php" class="action-item cart-item" aria-label="Ver Carrito" style="color:#333">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="color:#333" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-cart">
-                     <circle cx="9" cy="21" r="1"></circle>
-                     <circle cx="20" cy="21" r="1"></circle>
-                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                 </svg>
-                 <span class="cart-count">0</span>
-                 <span>Carrito</span>
-            </a>
-        </div>
-    </div>
-
-    <nav class="secondary-nav" style="text-align: center">
-    <ul>
-        <li><a href="buscar.php?query=cerveza">Cerveza</a></li>
-        <li><a href="buscar.php?query=aguardiente">Aguardiente</a></li>
-        <li><a href="buscar.php?query=ron">Ron</a></li>
-        <li><a href="buscar.php?query=whisky">Whisky</a></li>
-        <li><a href="buscar.php?query=vinos">Vinos</a></li>
-        <li><a href="buscar.php?query=cremas">Cremas</a></li>
-        <li><a href="buscar.php?query=cigarrillos">Cigarrillos</a></li>
-        <li><a href="buscar.php?query=comestibles">Comestibles</a></li>
-        <li><a href="buscar.php?query=otros">Promoxion</a></li>
-        <li><a href="buscar.php?query=otros">Mas Vendidos</a></li>
-        <li><a href="buscar.php?query=otros">Descuentos</a></li>
-    </ul>
-</nav>
-
-</header style="borden:0px">
-
-    <main class="container">
-        <div class="confirmation-container">
-            <i class="fas fa-check-circle"></i>
-            <h1>¡Pedido Confirmado!</h1>
+        <?php if (!empty($nombre_cliente)): ?>
+            <p>Gracias, <strong><?php echo htmlspecialchars($nombre_cliente); ?></strong>, por tu compra en Don Jorgito.</p>
+        <?php else: ?>
             <p>Gracias por tu compra en Don Jorgito.</p>
-            <p>Tu pedido con ID: <span class="order-id">#<?php echo htmlspecialchars($order_id); ?></span> ha sido recibido con éxito.</p>
-            <p>Hemos enviado una confirmación a tu correo electrónico. Te contactaremos pronto para coordinar la entrega.</p>
-            <a href="index.php" class="btn-continue">Volver a la Tienda</a>
-        </div>
-    </main>
+        <?php endif; ?>
 
-    <footer class="main-footer">
-        <div class="footer-content">
-            <p>&copy; <?php echo date('Y'); ?> Tu Tienda. Todos los derechos reservados.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
+        <p>Tu pedido con ID: <span class="order-id">#<?php echo htmlspecialchars($order_id); ?></span> ha sido recibido con éxito.</p>
+
+        <?php if (!empty($id_cliente)): ?>
+            <p class="customer-id">Asociado a tu cuenta de cliente <strong>#<?php echo (int) $id_cliente; ?></strong>.</p>
+        <?php endif; ?>
+
+        <p>Pagarás <strong>en efectivo contra entrega</strong>. Hemos enviado una confirmación a tu correo electrónico. Te contactaremos pronto para coordinar la entrega.</p>
+        <a href="index.php" class="btn-continue">Volver a la Tienda</a>
+    </div>
+</main>
+
+<?php include 'includes/footer.php'; ?>

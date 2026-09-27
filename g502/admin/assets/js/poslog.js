@@ -32,7 +32,7 @@ inputBusqueda.addEventListener('input', (e) => {
                             <small class="d-block text-muted">${p.caracteristica || 'Sin descripción'}</small>
                         </div>
                         <div class="text-end">
-                            <span class="badge bg-success" style="font-size: 0.9rem;">$${parseFloat(p.precio).toLocaleString()}</span>
+                            <span class="badge bg-success" style="font-size: 0.9rem;">$${parseFloat(p.value_final).toLocaleString()}</span>
                             <div style="font-size: 0.7rem; color: #999; margin-top: 5px;">PLU: ${p.plu || 'N/A'}</div>
                         </div>
                     </div>`;
@@ -69,7 +69,7 @@ function agregarAlPos(producto, multiplicador = 1) {
             id: producto.id,
             nombre: producto.producto,
             caracteristica: producto.caracteristica,
-            precio: parseFloat(producto.precio),
+            value_final: parseFloat(producto.value_final),
             cantidad: multiplicador
         });
     }
@@ -87,7 +87,7 @@ function actualizarVista() {
         return;
     }
     carritoPos.forEach((item, index) => {
-        let subtotal = item.precio * item.cantidad;
+        let subtotal = item.value_final * item.cantidad;
         total += subtotal;
         listaItems.innerHTML += `
             <div class="product-card">
@@ -145,11 +145,9 @@ function seleccionarMetodo(tipo) {
 }
 
 function calcularCambio() {
-    // 1. Limpiamos el total de puntos, comas y signos para operar matemáticamente
     const totalTexto = totalDisplay.innerText.replace(/[^\d]/g, '');
     const total = parseInt(totalTexto) || 0;
     
-    // 2. Obtenemos lo que ingresó el empleado
     const pagado = parseInt(document.getElementById('monto-pagado').value) || 0;
     
     const cambio = pagado - total;
@@ -159,17 +157,15 @@ function calcularCambio() {
     if (pagado === 0) {
         display.innerText = '$ 0';
         display.className = 'h3 m-0 fw-bold text-muted';
-        btnConfirmar.disabled = true; // Bloqueado
+        btnConfirmar.disabled = true;
     } else if (cambio < 0) {
-        // Dinero insuficiente
         display.innerText = 'Faltan: $ ' + Math.abs(cambio).toLocaleString();
         display.className = 'h3 m-0 fw-bold text-danger';
-        btnConfirmar.disabled = true; // Bloqueado
+        btnConfirmar.disabled = true;
     } else {
-        // Dinero suficiente
         display.innerText = '$ ' + cambio.toLocaleString();
         display.className = 'h3 m-0 fw-bold text-success';
-        btnConfirmar.disabled = false; // Habilitado para cobrar
+        btnConfirmar.disabled = false;
     }
 }
 
@@ -179,21 +175,18 @@ function procesarVentaFinal() {
     const pagado = parseInt(document.getElementById('monto-pagado').value) || 0;
     const cambio = pagado - total;
 
-    // 1. Verificación de seguridad
     if (pagado < total) {
         alert("¡Error! El dinero recibido es menor al total de la venta.");
         return;
     }
 
-    // 2. Preparar los datos para enviar a las tablas factura_base y factura
     const datosVenta = {
         total: total,
-        metodo_pago: 'Efectivo', // Puedes dinamizar esto con una variable
+        metodo_pago: 'Efectivo',
         cambio: cambio.toString(),
-        productos: carritoPos // Enviamos todo el array de productos
+        productos: carritoPos
     };
 
-    // 3. Enviar datos al servidor mediante Fetch
     fetch('facturas.php', {
         method: 'POST',
         headers: {
@@ -206,7 +199,6 @@ function procesarVentaFinal() {
         if (data.status === 'success') {
             alert("Venta #" + data.numero_factura + " guardada con éxito.");
             
-            // Limpiar todo después del éxito
             carritoPos = [];
             actualizarVista();
             modalCobro.hide();
@@ -220,9 +212,15 @@ function procesarVentaFinal() {
         alert("Hubo un error al conectar con el servidor.");
     });
 }
-// Añade esto a tu pos.js
-function generarPagoWompi() {
-    // 1. Obtenemos el total limpio (sin símbolos)
+
+// --- PAGO WOMPI (CORREGIDO) ---
+// aaaaaaaaaaaaaaaaaaaa
+// Antes solo abría paymeth2.php con el total en la URL y nunca guardaba
+// el carrito ni cerraba el ciclo con la factura. Ahora primero registra
+// el carrito en el servidor (preparar_pago_wompi.php) y solo abre Wompi
+// con una referencia segura; la venta se factura sola cuando llega el
+// webhook de confirmación de pago (ver webhook_wompi.php).
+async function generarPagoWompi() {
     const totalTexto = document.getElementById('pos-total').innerText.replace(/[^\d]/g, '');
     const total = parseInt(totalTexto) || 0;
 
@@ -231,14 +229,33 @@ function generarPagoWompi() {
         return;
     }
 
-    // 2. Pedimos el nombre del cliente (opcional)
     const nombreCliente = prompt("Nombre del cliente para el recibo:", "Cliente G502");
-    
-    if (nombreCliente) {
-        // 3. Redirigimos a tu archivo paymeth2.php con los parámetros automáticos
-        const url = `paymeth2.php?customer_name=${encodeURIComponent(nombreCliente)}&precio=${total}`;
-        
-        // Abrimos en una pestaña nueva para no cerrar el POS
+    if (!nombreCliente) return;
+
+    try {
+        const res = await fetch('preparar_pago_wompi.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                productos: carritoPos,
+                total: total,
+                customer_name: nombreCliente
+            })
+        });
+        const data = await res.json();
+
+        if (data.status !== 'success') {
+            alert("No se pudo iniciar el pago: " + (data.message || 'Error desconocido'));
+            return;
+        }
+
+        const url = `paymeth2.php?ref=${encodeURIComponent(data.referencia)}`;
         window.open(url, '_blank');
+
+        // El carrito NO se limpia aquí a propósito: el pago todavía no está
+        // confirmado. Se limpia solo cuando el webhook procese la venta.
+    } catch (error) {
+        console.error("Error al preparar pago Wompi:", error);
+        alert("Hubo un error al conectar con el servidor.");
     }
 }

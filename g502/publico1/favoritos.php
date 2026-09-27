@@ -29,7 +29,7 @@ if ($result_favs) {
     }
 }
 ?>
-
+<?php include 'includes/header.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,54 +39,17 @@ if ($result_favs) {
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    
+    <link rel="stylesheet" type="text/css" href="assets/css/buscar.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/estilosindex.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/mobile.css">
 
-    <style>
-        :root { --azul-oscuro: #001f3f; }
-        .fav-main-content { padding: 50px 0; min-height: 65vh; background-color: #f8f9fa; }
-        .product-card-fav { 
-            background: white; border-radius: 12px; padding: 20px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative;
-            transition: transform 0.2s; height: 100%; display: flex; flex-direction: column;
-        }
-        .btn-delete-fav {
-            position: absolute; top: 12px; right: 12px; color: #ff4d4d;
-            border: none; background: none; font-size: 1.2rem; cursor: pointer; z-index: 10;
-        }
-        .img-fav-container { height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
-        .img-fav-container img { max-height: 100%; object-fit: contain; }
-        
-        /* Botón personalizado g502 */
-        .btn-g502-cart {
-            background-color: var(--azul-oscuro);
-            color: white;
-            border: none;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-        .btn-g502-cart:hover { background-color: #003366; color: white; }
-        
-        .quantity-control input::-webkit-outer-spin-button,
-        .quantity-control input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    </style>
+    
 </head>
 
 <body>
     
-<header class="main-header">
-    <div class="header-content d-flex align-items-center justify-content-between p-3 border-bottom">
-        <div class="header-logo">
-            <a href="index.php"><img src="../images/logo1.png" alt="Logo" width="150"></a>
-        </div>
-        <div class="header-user-actions">
-            <a href="favoritos.php" class="btn btn-outline-dark position-relative me-2">
-                <i class="fas fa-heart"></i>
-                <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"><?php echo count($productos_favoritos); ?></span>
-            </a>
-            <a href="ver_carrito.php" class="btn btn-outline-dark"><i class="fas fa-shopping-cart"></i></a>
-        </div>
-    </div>
-</header>
+
 
 <main class="fav-main-content">
     <div class="container">

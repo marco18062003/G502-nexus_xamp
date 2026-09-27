@@ -1,4 +1,5 @@
 <?php
+// get_ticket.php this page 
 require_once '../config/db.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -43,6 +44,7 @@ $stmtDetalle = $conn->prepare("
 $stmtDetalle->bind_param("i", $id);
 $stmtDetalle->execute();
 $resDetalle = $stmtDetalle->get_result();
+$myVariable = 10000;
 ?>
 
 <!DOCTYPE html>
@@ -168,14 +170,15 @@ $resDetalle = $stmtDetalle->get_result();
 </table>
 
     <div class="row justify-content-end">
-        <div class="col-4">
-            <table class="table table-sm border">
-                <tr><td>SUBTOTAL</td><td class="text-end">$<?php echo number_format($f['total'] / 1.19, 2); ?></td></tr>
-                <tr><td>IVA 19%</td><td class="text-end">$<?php echo number_format($f['total'] - ($f['total'] / 1.19), 2); ?></td></tr>
-                <tr class="fw-bold bg-light"><td>TOTAL COP</td><td class="text-end">$<?php echo number_format($f['total'], 2); ?></td></tr>
-            </table>
-        </div>
+    <div class="col-4">
+        <table class="table table-sm border">
+            <tr><td>SUBTOTAL</td><td class="text-end">$<?php echo number_format($f['total'] / 1.19, 2); ?></td></tr>
+            <tr><td>IVA 19%</td><td class="text-end">$<?php echo number_format($f['total'] - ($f['total'] / 1.19), 2); ?></td></tr>
+            <tr><td>Domicilio</td><td class="text-end">$<?php echo number_format($myVariable, 2); ?></td></tr>
+            <tr class="fw-bold bg-light"><td>TOTAL COP</td><td class="text-end">$<?php echo number_format($f['total'] + $myVariable, 2); ?></td></tr>
+        </table>
     </div>
+</div>
 </div>
 
 

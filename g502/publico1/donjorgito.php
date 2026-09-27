@@ -1,61 +1,76 @@
 <?php
 
-require_once('../admin/seguridad_admin.php');
-$host        = 'localhost';
-$usuario_db  = 'u584797177_Marco';
-$password_db = 'Grupoexito2025@';
-$nombre_db   = 'u584797177_dios1';
+require_once '../config/db.php'; 
 
-$mysqli = new mysqli($host, $usuario_db, $password_db, $nombre_db);
-if ($mysqli->connect_errno) {
-    die("<div class='mensaje error'>Error de conexión: " . $mysqli->connect_error . "</div>");
-}
-$mysqli->set_charset("utf8mb4");
+// Evita el warning "Undefined variable $mensaje_usuario"
+// cuando la página se carga sin haber procesado el formulario todavía.
+$mensaje_usuario = '';
 
-$mensaje_usuario = "";
+// ----------------------------------------------------------------
+// Procesar el formulario cuando se envía por POST
+// ----------------------------------------------------------------
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $ca             = trim($_POST['ca'] ?? '');
-    $producto       = trim($_POST['producto'] ?? '');
-    $caracteristica = trim($_POST['caracteristica'] ?? '');
-    $precio         = trim($_POST['precio'] ?? '');
-    $cantidad       = trim($_POST['cantidad'] ?? '');
-    $marca          = trim($_POST['marca'] ?? '');
-    $ean            = trim($_POST['ean'] ?? '');
-    $imagen         = '';
+    // 1. Recoger y limpiar los campos de texto
+    $ca             = mysqli_real_escape_string($conn, trim($_POST['ca'] ?? ''));
+    $marca          = mysqli_real_escape_string($conn, trim($_POST['marca'] ?? ''));
+    $producto       = mysqli_real_escape_string($conn, trim($_POST['producto'] ?? ''));
+    $caracteristica = mysqli_real_escape_string($conn, trim($_POST['caracteristica'] ?? ''));
+    $ean            = mysqli_real_escape_string($conn, trim($_POST['ean'] ?? ''));
+    $precio         = mysqli_real_escape_string($conn, trim($_POST['precio'] ?? ''));
+    $cantidad       = mysqli_real_escape_string($conn, trim($_POST['cantidad'] ?? ''));
+    $estado         = mysqli_real_escape_string($conn, trim($_POST['estado'] ?? ''));
 
-    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
-        $imagen_temp   = $_FILES['imagen']['tmp_name'];
-        $imagen_nombre = basename($_FILES['imagen']['name']);
-        $carpeta_destino = '../Donjorgitofinal/';
-        $ruta_destino    = $carpeta_destino . $imagen_nombre;
+    $imagenNombre = '';
+    $errorImagen  = false;
 
-        if (move_uploaded_file($imagen_temp, $ruta_destino)) {
-            $imagen = $ruta_destino;
+    // 2. Procesar la imagen subida
+    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+
+        // Carpeta física donde se guardan las imágenes (misma ruta que usa buscar.php: ../Donjorgitofinal/)
+        $carpetaDestino = __DIR__ . '/../Donjorgitofinal/';
+
+        // Si la carpeta no existe, la creamos
+        if (!is_dir($carpetaDestino)) {
+            mkdir($carpetaDestino, 0755, true);
+        }
+
+        $extension       = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
+        $extPermitidas   = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+
+        if (in_array($extension, $extPermitidas)) {
+            // Nombre único para evitar sobrescrituras
+            $imagenNombre = uniqid('prod_') . '.' . $extension;
+            $rutaDestino  = $carpetaDestino . $imagenNombre;
+
+            if (!move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino)) {
+                $errorImagen = true;
+            }
         } else {
-            $mensaje_usuario = "<div class='mensaje error'>Error al subir la imagen.</div>";
+            $errorImagen = true;
         }
     } else {
-        $mensaje_usuario = "<div class='mensaje error'>Por favor selecciona una imagen.</div>";
+        $errorImagen = true;
     }
 
-    if (empty($mensaje_usuario)) {
-        $sql = "INSERT INTO donjorgito1 (ca, producto, caracteristica, precio, cantidad, imagen, marca, ean) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("ssssssss", $ca, $producto, $caracteristica, $precio, $cantidad, $imagen, $marca, $ean);
-            if ($stmt->execute()) {
-                $mensaje_usuario = "<div class='mensaje exito'>¡Producto registrado con éxito!</div>";
-            } else {
-                $mensaje_usuario = "<div class='mensaje error'>Error al guardar: " . $stmt->error . "</div>";
-            }
-            $stmt->close();
+    // 3. Validar que los campos obligatorios estén presentes
+    if ($ca === '' || $marca === '' || $producto === '' || $caracteristica === '' || $precio === '' || $cantidad === ''|| $estado === '') {
+        $mensaje_usuario = '<div class="mensaje error">⚠️ Por favor completa todos los campos obligatorios.</div>';
+    } elseif ($errorImagen) {
+        $mensaje_usuario = '<div class="mensaje error">⚠️ No se pudo subir la imagen. Verifica el formato (jpg, jpeg, png, webp, gif).</div>';
+    } else {
+        // 4. Insertar en la base de datos
+        $sqlInsert = "INSERT INTO donjorgito1 (ca, marca, producto, caracteristica, ean, precio, cantidad, imagen, estado)
+                      VALUES ('$ca', '$marca', '$producto', '$caracteristica', '$ean', '$precio', '$cantidad', '$imagenNombre','$estado' )";
+
+        if (mysqli_query($conn, $sqlInsert)) {
+            $mensaje_usuario = '<div class="mensaje exito">✅ Producto registrado correctamente.</div>';
         } else {
-            $mensaje_usuario = "<div class='mensaje error'>Error al preparar: " . $mysqli->error . "</div>";
+            $mensaje_usuario = '<div class="mensaje error">❌ Error al guardar en la base de datos: ' . htmlspecialchars(mysqli_error($conn)) . '</div>';
         }
     }
 }
 
-$mysqli->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -68,45 +83,83 @@ $mysqli->close();
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f4e5b2;
+            --gold-dark: #a8860f;
+            --black: #0d0d0d;
+            --black-soft: #1a1a1a;
+            --gray-dark: #2b2b2b;
+            --white: #ffffff;
+        }
+
         * { box-sizing: border-box; }
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f8f8f8;
-            color: #333;
+            background-color: var(--black);
+            color: var(--gold-light);
         }
         form {
-            background: #fff;
+            background: var(--black-soft);
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--gold-dark);
+            box-shadow: 0 4px 18px rgba(212, 175, 55, 0.15);
             max-width: 450px;
             margin: 30px auto;
         }
-        h2 { text-align: center; color: #444; margin-bottom: 25px; }
-        label { display: block; margin-bottom: 6px; font-weight: bold; color: #555; }
+        h2 {
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: var(--gold-light); }
         input[type="text"], select, input[type="file"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--gold-dark);
             border-radius: 4px;
+            background-color: var(--black);
+            color: var(--white);
         }
+        input[type="text"]::placeholder { color: #888; }
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
+        }
+        select option { background-color: var(--black); color: var(--white); }
+
+        input[type="file"] {
+            padding: 8px;
+            color: var(--gold-light);
+        }
+
         input[type="submit"] {
-            background-color: #28a745;
-            color: white;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+            color: var(--black);
             padding: 12px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             width: 100%;
-            transition: background-color 0.3s;
+            transition: filter 0.3s ease, transform 0.15s ease;
         }
-        input[type="submit"]:hover { background-color: #218838; }
+        input[type="submit"]:hover { filter: brightness(1.1); transform: scale(1.01); }
+
         .mensaje { margin: 20px auto; padding: 12px; border-radius: 5px; text-align: center; font-weight: bold; max-width: 450px; }
-        .exito { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .exito { background-color: #143d1f; color: var(--gold); border: 1px solid var(--gold-dark); }
+        .error { background-color: #3d1414; color: #ff8080; border: 1px solid #8a2b2b; }
+
+        a { color: var(--gold) !important; }
+        a:hover { color: var(--gold-light) !important; }
 
         /* EAN input con botón de cámara */
         .ean-wrapper {
@@ -122,49 +175,51 @@ $mysqli->close();
         .btn-scan {
             padding: 10px 14px;
             font-size: 20px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--gold-dark);
             border-radius: 4px;
-            background: #fff;
+            background: var(--black);
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s ease, border-color 0.2s ease;
             white-space: nowrap;
         }
-        .btn-scan:hover { background: #f0f0f0; }
+        .btn-scan:hover { background: var(--gold-dark); border-color: var(--gold); }
 
         /* Modal del escáner */
         #scanner-modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.85);
             z-index: 9999;
             justify-content: center;
             align-items: center;
         }
         #scanner-modal.active { display: flex; }
         .scanner-box {
-            background: #fff;
+            background: var(--black-soft);
+            border: 1px solid var(--gold-dark);
             border-radius: 12px;
             padding: 20px;
             width: 320px;
             max-width: 95vw;
             text-align: center;
         }
-        .scanner-box h3 { margin: 0 0 15px; color: #333; }
+        .scanner-box h3 { margin: 0 0 15px; color: var(--gold); }
         #reader { width: 100%; border-radius: 8px; overflow: hidden; }
         #btn-close-scanner {
             margin-top: 15px;
             padding: 10px 24px;
-            background: #dc3545;
-            color: #fff;
+            background: #8a2b2b;
+            color: var(--white);
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 15px;
             width: 100%;
+            font-weight: 600;
         }
-        #btn-close-scanner:hover { background: #c82333; }
-        #scanner-status { margin-top: 10px; font-size: 13px; color: #666; min-height: 20px; }
+        #btn-close-scanner:hover { background: #a33333; }
+        #scanner-status { margin-top: 10px; font-size: 13px; color: var(--gold-light); min-height: 20px; }
     </style>
 </head>
 <body>
@@ -182,7 +237,7 @@ $mysqli->close();
 </div>
 
 <form action="" method="POST" enctype="multipart/form-data">
-    <p><a href="../admin/index.php" style="color:#28a745; text-decoration:none;">← Volver al Dashboard</a></p>
+    <p><a href="../admin/index.php" style="text-decoration:none;">← Volver al Dashboard</a></p>
     <h2>Registro de Productos</h2>
 
     <div>
@@ -256,6 +311,16 @@ $mysqli->close();
     <div>
         <label for="cantidad">Cantidad:</label>
         <input type="text" id="cantidad" name="cantidad" required>
+    </div>
+    
+    <div>
+        <label for="estado">Estado:</label>
+        <select id="estado" name="estado" required>
+            <option value="">Selecciona un estado</option>
+            <option value="activo">activo</option>
+            <option value="descontinuado">descontinuado</option>
+            <option value="agotado">agotado</option>            
+        </select>
     </div>
 
     <div>

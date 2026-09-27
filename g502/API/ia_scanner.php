@@ -16,6 +16,64 @@ $extractedData = [];
 require_once '../config/keys.php';
 $apiKey = GOOGLE_VISION_KEY;
 
+// ─── Líneas a ignorar siempre (encabezados, totales, promociones) ──────────
+function esLineaValida($linea) {
+    // Encabezados / metadatos de factura
+    if (preg_match('/NIT|TEL|FECHA|TOTAL|IVA|FACTURA|C\.C|PAGINA|SUBTOTAL/i', $linea)) return false;
+    // Líneas de promoción tipo "PGUE 1LLEVE 2 MA" (pague 1 lleve 2, etc.)
+    if (preg_match('/PGUE|LLEVE|DESCTO|DSCTO|PROMO/i', $linea)) return false;
+    return true;
+}
+
+// ─── Busca el nombre real del producto en la base de datos ─────────────────
+function buscarNombreProducto($conn, $plu) {
+    $lookupStmt = $conn->prepare("SELECT NOMBRE FROM Hoja1 WHERE PLU = ? OR EAN = ? LIMIT 1");
+    $lookupStmt->bind_param("ss", $plu, $plu);
+    $lookupStmt->execute();
+    $lookupRow = $lookupStmt->get_result()->fetch_assoc();
+    $lookupStmt->close();
+    return $lookupRow ? $lookupRow['NOMBRE'] : null;
+}
+
+// ─── Procesa el texto de una página/imagen y llena $extractedData ──────────
+function procesarTexto($fullText, $conn, $stmt, $tipo, &$extractedData) {
+    $lines = explode("\n", $fullText);
+
+    foreach ($lines as $linea) {
+        $linea = trim($linea);
+        if ($linea === '') continue;
+        if (!esLineaValida($linea)) continue;
+
+        if (preg_match('/\b(\d{4,15})\b/', $linea, $m)) {
+            $plu = $m[1];
+
+            // Descarta NITs / códigos de identificación tributaria (prefijos 800/890/900/901 largos)
+            if (preg_match('/^(800|890|900|901)/', $plu) && strlen($plu) > 8) continue;
+
+            // Evita duplicados
+            if (in_array($plu, array_column($extractedData, 'plu'))) continue;
+
+            // 1) Intenta traer el nombre real desde la base de datos
+            $name = buscarNombreProducto($conn, $plu);
+
+            // 2) Si no existe en la BD, usa el texto de la línea (quitando el código)
+            if (!$name) {
+                $textoLinea = trim(preg_replace('/[:\-_|.]/', '', str_replace($plu, '', $linea)));
+                $name = (strlen($textoLinea) >= 3) ? $textoLinea : "Producto Desconocido ($plu)";
+            }
+
+            $extractedData[] = ['plu' => $plu, 'nombre' => $name];
+
+            $cat = 'General';
+            $qty = 1;
+            $desc = 'Escaneado por IA G502';
+            $st = 'Activo';
+            $stmt->bind_param("sssisss", $name, $plu, $cat, $qty, $desc, $st, $tipo);
+            $stmt->execute();
+        }
+    }
+}
+
 if (isset($_POST['scan'])) {
     if (!isset($_FILES['fileToScan']) || $_FILES['fileToScan']['error'] == UPLOAD_ERR_NO_FILE) {
         $errorMsg = "❌ Por favor, selecciona un archivo primero.";
@@ -64,32 +122,13 @@ if (isset($_POST['scan'])) {
 
                         if (!isset($resData['responses'][0]['fullTextAnnotation']['text'])) continue;
 
-                        $lines = explode("\n", $resData['responses'][0]['fullTextAnnotation']['text']);
-
-                        foreach ($lines as $linea) {
-                            $linea = trim($linea);
-                            if (preg_match('/NIT|TEL|FECHA|TOTAL|IVA|FACTURA|C\.C|PAGINA/i', $linea)) continue;
-
-                            if (preg_match('/\b(\d{4,15})\b/', $linea, $m)) {
-                                $plu = $m[1];
-                                if (preg_match('/^(800|890|900|901)/', $plu) && strlen($plu) > 8) continue;
-                                if (in_array($plu, array_column($extractedData, 'plu'))) continue;
-
-                               $lookupStmt = $conn->prepare("SELECT NOMBRE FROM Hoja1 WHERE PLU = ? OR EAN = ? LIMIT 1");
-                               $lookupStmt->bind_param("ss", $plu, $plu);
-                               $lookupStmt->execute();
-                               $lookupRow = $lookupStmt->get_result()->fetch_assoc();
-                               $lookupStmt->close();
-
-                               $name = $lookupRow ? $lookupRow['NOMBRE'] : "Desconocido ($plu)";
-
-                                $extractedData[] = ['plu' => $plu, 'nombre' => $name];
-
-                                $cat = 'General'; $qty = 1; $desc = 'Escaneado por IA G502'; $st = 'Activo'; $tipo = 'PDF';
-                                $stmt->bind_param("sssisss", $name, $plu, $cat, $qty, $desc, $st, $tipo);
-                                $stmt->execute();
-                            }
-                        }
+                        procesarTexto(
+                            $resData['responses'][0]['fullTextAnnotation']['text'],
+                            $conn,
+                            $stmt,
+                            'PDF',
+                            $extractedData
+                        );
                     }
 
                     $stmt->close();
@@ -117,33 +156,31 @@ if (isset($_POST['scan'])) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-            $resData = json_decode(curl_exec($ch), true);
+            $rawResponse = curl_exec($ch);
+            $curlErr = curl_error($ch);
             curl_close($ch);
+            $resData = json_decode($rawResponse, true);
+
+            // 🔍 DEBUG opcional — visita la página con ?debug=1 si necesitas
+            // volver a inspeccionar la respuesta cruda de Google Vision.
+            if (isset($_GET['debug'])) {
+                echo "<pre style='background:#000;color:#0f0;padding:15px;overflow:auto;'>";
+                echo "cURL error: " . ($curlErr ?: "ninguno") . "\n\n";
+                echo "Respuesta cruda de Google Vision:\n";
+                echo htmlspecialchars($rawResponse);
+                echo "</pre>";
+            }
 
             if (isset($resData['responses'][0]['fullTextAnnotation']['text'])) {
-                $lines = explode("\n", $resData['responses'][0]['fullTextAnnotation']['text']);
-
                 $stmt = $conn->prepare("INSERT INTO productos_ia (name, plu_code, category, quantity, description, state, tipo) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-                foreach ($lines as $linea) {
-                    $linea = trim($linea);
-                    if (preg_match('/NIT|TEL|FECHA|TOTAL|IVA|FACTURA|C\.C|PAGINA/i', $linea)) continue;
-
-                    if (preg_match('/\b(\d{4,15})\b/', $linea, $m)) {
-                        $plu = $m[1];
-                        if (preg_match('/^(800|890|900|901)/', $plu) && strlen($plu) > 8) continue;
-                        if (in_array($plu, array_column($extractedData, 'plu'))) continue;
-
-                        $name = trim(preg_replace('/[:\-_|.]/', '', str_replace($plu, '', $linea)));
-                        if (strlen($name) < 3) $name = "Producto Desconocido ($plu)";
-
-                        $extractedData[] = ['plu' => $plu, 'nombre' => $name];
-
-                        $cat = 'General'; $qty = 1; $desc = 'Escaneado por IA G502'; $st = 'Activo'; $tipo = 'IMG';
-                        $stmt->bind_param("sssisss", $name, $plu, $cat, $qty, $desc, $st, $tipo);
-                        $stmt->execute();
-                    }
-                }
+                procesarTexto(
+                    $resData['responses'][0]['fullTextAnnotation']['text'],
+                    $conn,
+                    $stmt,
+                    'IMG',
+                    $extractedData
+                );
 
                 $stmt->close();
                 $successMsg = "✅ " . count($extractedData) . " productos detectados.";
@@ -379,9 +416,14 @@ window.onclick = function(e) {
     if (e.target.id === 'barcodeModal') closeModal();
 }
 
-document.getElementById('selectAll').addEventListener('change', function() {
-    document.querySelectorAll('.product-check').forEach(cb => cb.checked = this.checked);
-});
+// Fix: solo engancha el listener si el checkbox existe en el DOM
+// (no existe cuando todavía no hay resultados escaneados)
+const selectAllCheckbox = document.getElementById('selectAll');
+if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener('change', function() {
+        document.querySelectorAll('.product-check').forEach(cb => cb.checked = this.checked);
+    });
+}
 
 async function uploadSelected() {
     const category = document.getElementById('categorySelect').value;

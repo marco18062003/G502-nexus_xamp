@@ -3,9 +3,9 @@ require_once '../config/db.php';
 date_default_timezone_set('America/Bogota'); 
 
 if(isset($_POST['save_excel'])){
-    $cat = mysqli_real_escape_string($conn, $_POST['category']);
-    $plus = $_POST['plu'];
-    $qtys = $_POST['qty'];
+    $cat   = $_POST['category'];
+    $plus  = $_POST['plu'];
+    $qtys  = $_POST['qty'];
     $descs = $_POST['desc'];
     $tipos = $_POST['tipo'] ?? []; 
     $dates = $_POST['date']; 
@@ -13,25 +13,33 @@ if(isset($_POST['save_excel'])){
     
     $current_time = date('Y-m-d H:i:s');
 
+    // Declare the variables BEFORE binding them
+    $name = '';
+    $plu = '';
+    $qty = 0;
+    $desc = '';
+    $tipo = '';
+    $vence = null;
+
+    $stmt = $conn->prepare(
+        "INSERT INTO plu_vencer (name, plu_code, category, quantity, description, state, tipo, created_at, fecha_vence) 
+         VALUES (?, ?, ?, ?, ?, '', ?, ?, ?)"
+    );
+    $stmt->bind_param('sssissss', $name, $plu, $cat, $qty, $desc, $tipo, $current_time, $vence);
+
     for($i=0; $i < count($plus); $i++) {
         $plu = trim($plus[$i]);
         if(empty($plu)) continue;
 
-        $qty = !empty($qtys[$i]) ? (int)$qtys[$i] : 1;
-        $desc = !empty($descs[$i]) ? mysqli_real_escape_string($conn, $descs[$i]) : 'Sin descripción';
-        $tipo = !empty($tipos[$i]) ? mysqli_real_escape_string($conn, $tipos[$i]) : ''; 
-        
-        $vence = !empty($dates[$i]) ? mysqli_real_escape_string($conn, $dates[$i]) : NULL;
-        $vence_sql = ($vence) ? "'$vence'" : "NULL"; 
+        $qty   = !empty($qtys[$i]) ? (int)$qtys[$i] : 1;
+        $desc  = !empty($descs[$i]) ? $descs[$i] : 'Sin descripción';
+        $tipo  = !empty($tipos[$i]) ? $tipos[$i] : '';
+        $vence = !empty($dates[$i]) ? $dates[$i] : null;
+        $name  = "Item " . $plu;
 
-        $name = "Item " . $plu;
-
-        $sql = "INSERT INTO plu_vencer (name, plu_code, category, quantity, description, state, tipo, created_at, fecha_vence) 
-                VALUES ('$name', '$plu', '$cat', '$qty', '$desc', '', '$tipo', '$current_time', $vence_sql)";
-        
-        if($conn->query($sql)) { $count++; }
+        if($stmt->execute()) { $count++; }
     }
-    
+
     if($count > 0) { $msg = "✔ ¡Éxito! $count productos cargados en $cat."; }
 }
 ?>
@@ -142,10 +150,32 @@ function startScanner(button) {
     document.getElementById('scanner-modal').style.display = 'flex';
     html5QrCode = new Html5Qrcode("reader");
     html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (text) => {
-        activeInput.value = text;
-        activeInput.dispatchEvent(new Event('input', { bubbles: true }));
         stopScanner();
+        resolveScannedCode(text);
     }).catch(err => alert("Error: " + err));
+}
+
+function resolveScannedCode(code) {
+    fetch(`get_plu_by_code.php?code=${encodeURIComponent(code)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.found) {
+                activeInput.value = data.plu;
+                const row = activeInput.closest('tr');
+                const descInput = row.querySelector('input[name="desc[]"]');
+                if (descInput && !descInput.value) {
+                    descInput.value = data.name;
+                }
+            } else {
+                activeInput.value = code;
+                alert("Código no encontrado en la base de datos: " + code);
+            }
+            activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+        })
+        .catch(err => {
+            console.error(err);
+            activeInput.value = code;
+        });
 }
 
 function stopScanner() {
@@ -173,8 +203,12 @@ function addRow() {
 
 document.addEventListener('input', function (e) {
     if (e.target.classList.contains('plu-input')) {
-        const query = e.target.value;
-        if (query.length < 2) return; 
+        const query = e.target.value.trim();
+        const row = e.target.closest('tr');
+        const descInput = row.querySelector('input[name="desc[]"]');
+
+        if (query.length < 2) return;
+
         fetch(`search_product.php?query=${encodeURIComponent(query)}`)
             .then(res => res.json())
             .then(data => {
@@ -186,6 +220,11 @@ document.addEventListener('input', function (e) {
                     opt.textContent = `${item.name} [${item.plu}]`;
                     dl.appendChild(opt);
                 });
+
+                const exactMatch = data.find(item => item.plu === query || item.ean === query);
+                if (exactMatch) {
+                    descInput.value = exactMatch.name;
+                }
             });
     }
 });

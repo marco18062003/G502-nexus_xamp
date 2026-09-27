@@ -1,100 +1,140 @@
-/* Container: Forced 5-Column Grid */
-.brand-container {
-    display: grid;
-    /* Force 5 columns on desktop, maintain spacing */
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 20px; 
-    padding: 40px 20px;
-    background-color: #f8f9fa;
+/* ============================================================
+   brand.css — Sección "Marcas que manejamos" (Tema Dorado & Negro)
+   ============================================================ */
+
+:root {
+    --gold: #d4af37;
+    --gold-light: #f4e5b2;
+    --gold-dark: #a8860f;
+    --black: #0d0d0d;
+    --black-soft: #1a1a1a;
+    --white: #ffffff;
 }
 
-/* The Card: Adjusted for 5-column layout */
+.brand-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    background: var(--black);
+    padding: 30px 20px;
+    border-radius: 14px;
+}
+
 .brand-card {
-    background: #ffffff;
-    border: none;
-    border-radius: 20px; /* Slightly tighter radius for smaller cards */
-    padding: 20px;
-    text-align: center;
-    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 210px; /* Adjusted height to look good in 5 columns */
-    box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    width: 140px;
+    padding: 16px 10px;
+    background: var(--black-soft);
+    border: 1px solid var(--gold-dark);
+    border-radius: 12px;
     text-decoration: none;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.02);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Interactive Hover: Lift + Shadow */
 .brand-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    background: #ffffff;
+    transform: translateY(-5px);
+    border-color: var(--gold);
+    box-shadow: 0 8px 18px rgba(212, 175, 55, 0.25);
 }
 
-/* Image: Vibrant & Centered */
 .brand-image {
-    width: 95%;
-    height: 95px; /* Scaled down slightly to fit 5 columns */
+    width: 80px;
+    height: 80px;
     object-fit: contain;
-    transition: all 0.5s ease;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.05));
-    opacity: 1; /* Always full color */
+    background: var(--white);
+    border-radius: 50%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 2px solid var(--gold-dark);
+    transition: border-color 0.25s ease;
 }
 
 .brand-card:hover .brand-image {
-    transform: scale(1.1);
-    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.1));
+    border-color: var(--gold);
 }
 
-/* Typography: Optimized for 5 columns */
 .brand-name {
-    margin-top: 18px;
-    font-weight: 700;
-    font-family: 'Poppins', sans-serif;
-    color: #232f3e;
-    font-size: 0.85rem; /* Smaller font to ensure names stay on one line */
+    color: var(--gold-light);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
 }
 
 .brand-card:hover .brand-name {
-    color: #e47911;
+    color: var(--gold);
 }
 
-/* Decorative Gold Bar */
-.brand-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 3px;
-    background: #e47911;
-    transition: all 0.4s ease;
-    transform: translateX(-50%);
+/* Título de la sección */
+.text-center.mb-5.fw-bold {
+    color: var(--gold) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.brand-card:hover::after {
-    width: 50%; 
+/* Mensaje cuando no hay marcas */
+.brand-container p.text-center {
+    color: var(--gold-light);
+    font-style: italic;
 }
 
-/* Responsive: Switch to 2 columns on mobile devices */
-@media (max-width: 992px) {
+/* ---------- Responsivo ---------- */
+
+/* Tablets */
+@media (max-width: 768px) {
     .brand-container {
-        grid-template-columns: repeat(2, 1fr); /* 2 columnas en el cel */
-        gap: 10px;
-        padding: 20px 10px;
+        gap: 14px;
+        padding: 24px 14px;
     }
     .brand-card {
-        height: 160px; /* Reducimos la altura para que quepan más en pantalla */
-        padding: 10px;
+        width: 120px;
+        padding: 14px 8px;
     }
     .brand-image {
-        height: 70px; /* Imagen un poco más pequeña */
+        width: 70px;
+        height: 70px;
+    }
+    .brand-name {
+        font-size: 0.82rem;
+    }
+}
+
+/* Celulares */
+@media (max-width: 576px) {
+    .brand-container {
+        gap: 10px;
+        padding: 18px 10px;
+        border-radius: 10px;
+    }
+    .brand-card {
+        width: 110px;
+        padding: 12px 8px;
+    }
+    .brand-image {
+        width: 60px;
+        height: 60px;
+    }
+    .brand-name {
+        font-size: 0.78rem;
+    }
+}
+
+/* Celulares muy pequeños */
+@media (max-width: 360px) {
+    .brand-card {
+        width: 90px;
+        padding: 10px 6px;
+    }
+    .brand-image {
+        width: 50px;
+        height: 50px;
+    }
+    .brand-name {
+        font-size: 0.7rem;
     }
 }

@@ -1,50 +1,76 @@
 <?php
 // Archivo: paymeth2.php
 session_start();
-
-// 1. Incluir base de datos
 include '../config/db.php';
 
-// 2. RECUPERACIÓN HÍBRIDA (Sesión o URL)
-// Primero intentamos sesión, si no, intentamos lo que viene en el link
+// --- FLUJO NUEVO (recomendado): viene con ?ref=... desde preparar_pago_wompi.php ---
+$referencia = $_GET['ref'] ?? '';
 $precio_pesos = 0;
-if (isset($_SESSION['pago_pendiente_monto']) && $_SESSION['pago_pendiente_monto'] > 0) {
-    $precio_pesos = $_SESSION['pago_pendiente_monto'];
-} elseif (isset($_GET['precio'])) {
-    $precio_pesos = (int)$_GET['precio'];
-}
-
 $nombre_cliente = 'Cliente G502';
-if (isset($_SESSION['pago_pendiente_cliente'])) {
-    $nombre_cliente = $_SESSION['pago_pendiente_cliente'];
-} elseif (isset($_GET['customer_name'])) {
-    $nombre_cliente = $_GET['customer_name'];
+
+if ($referencia !== '') {
+    $stmt = mysqli_prepare($conn, "SELECT total, cliente_nombre, estado FROM venta_pendiente WHERE referencia_unica = ?");
+    mysqli_stmt_bind_param($stmt, "s", $referencia);
+    mysqli_stmt_execute($stmt);
+    $row = mysqli_stmt_get_result($stmt)->fetch_assoc();
+
+    if (!$row) {
+        exit("<div style='background:#000;color:#fff;text-align:center;padding-top:100px;font-family:sans-serif;'>
+                <h1 style='color:#d4af37;'>Referencia no encontrada</h1>
+                <p>Este link de pago no es válido o ya expiró.</p>
+                <a href='https://donjorgito.shop/g502/publico1/' style='color:#d4af37;text-decoration:none;border:1px solid #d4af37;padding:10px 20px;border-radius:5px;'>Volver al POS</a>
+              </div>");
+    }
+    if ($row['estado'] !== 'PENDIENTE') {
+        exit("<div style='background:#000;color:#fff;text-align:center;padding-top:100px;font-family:sans-serif;'>
+                <h1 style='color:#d4af37;'>Esta venta ya fue procesada</h1>
+                <p>Esta referencia de pago ya no está pendiente.</p>
+                <a href='https://donjorgito.shop/g502/publico1/' style='color:#d4af37;text-decoration:none;border:1px solid #d4af37;padding:10px 20px;border-radius:5px;'>Volver al POS</a>
+              </div>");
+    }
+
+    $precio_pesos = (int)$row['total'];
+    $nombre_cliente = $row['cliente_nombre'];
+} else {
+    // --- FLUJO ANTIGUO (fallback por si algo abre este archivo sin ref) ---
+    // Nota: este camino NO queda ligado a venta_pendiente, así que el webhook
+    // no podrá reconstruir el carrito. Solo debería usarse temporalmente.
+    if (isset($_SESSION['pago_pendiente_monto']) && $_SESSION['pago_pendiente_monto'] > 0) {
+        $precio_pesos = $_SESSION['pago_pendiente_monto'];
+    } elseif (isset($_GET['value_final'])) {
+        $precio_pesos = (int)$_GET['value_final'];
+    }
+    if (isset($_SESSION['pago_pendiente_cliente'])) {
+        $nombre_cliente = $_SESSION['pago_pendiente_cliente'];
+    } elseif (isset($_GET['customer_name'])) {
+        $nombre_cliente = $_GET['customer_name'];
+    }
+    // Generamos una referencia "suelta" solo para poder mostrar el widget.
+    $referencia = "G502_LEGACY_" . time();
 }
 
-// 3. Validación de seguridad mejorada
 if ($precio_pesos <= 0) {
     echo "<div style='background:#000; color:#fff; text-align:center; padding-top:100px; font-family:sans-serif;'>
             <h1 style='color:#d4af37;'>Acceso No Autorizado</h1>
-            <p>No recibimos un monto válido ($precio_pesos). Por favor, intenta de nuevo desde el POS.</p>
-            <a href='pos.php' style='color:#d4af37; text-decoration:none; border:1px solid #d4af37; padding:10px 20px; border-radius:5px;'>Volver al POS</a>
+            <p>No recibimos un monto válido. Por favor, intenta de nuevo desde el POS.</p>
+            <a href='https://donjorgito.shop/g502/publico1/' style='color:#d4af37; text-decoration:none; border:1px solid #d4af37; padding:10px 20px; border-radius:5px;'>Volver al POS</a>
           </div>";
     exit;
 }
 
-// 4. Configuración Wompi
+// Configuración Wompi
 $monto_centavos = (int)($precio_pesos * 100);
-$referencia = "G502_" . time(); // Genera una referencia única
 $moneda = "COP";
 $llave_publica = "pub_prod_Id4Oj4RzKFYJrkitudFtYLIQ4DxwBmNo";
 $secreto_integridad = "prod_integrity_v1z7jKwqxZdShVUtooJoQsCeTJiOvKQ7";
 
-// 5. Firma de Integridad (Crucial para que Wompi no de error)
+// Firma de Integridad (para el widget de checkout)
 $cadena = $referencia . $monto_centavos . $moneda . $secreto_integridad;
 $firma = hash("sha256", $cadena);
 
-// 6. Registro en DB (Usamos la conexión $conn de db.php)
+// Registro en wompi1 (usa la MISMA referencia que venta_pendiente, así el webhook puede cruzar ambas tablas)
 $nombre_safe = mysqli_real_escape_string($conn, $nombre_cliente);
-$sql_insert = "INSERT INTO wompi1 (referencia_unica, monto_centavos, estado_pago, email_cliente) 
+$sql_insert = "INSERT INTO wompi1 (referencia_unica, monto_centavos, estado_pago, email_cliente)
                VALUES ('$referencia', '$monto_centavos', 'PENDIENTE', '$nombre_safe')";
 mysqli_query($conn, $sql_insert);
 ?>
@@ -58,16 +84,15 @@ mysqli_query($conn, $sql_insert);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .checkout-container { 
-            border: 1px solid #d4af37; 
-            padding: 30px; 
-            border-radius: 20px; 
-            background: #111; 
+        .checkout-container {
+            border: 1px solid #d4af37;
+            padding: 30px;
+            border-radius: 20px;
+            background: #111;
             margin-top: 50px;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
         .price-tag { font-size: 45px; font-weight: bold; color: #d4af37; margin: 20px 0; }
-        /* Estilo para el botón de Wompi */
         .wompi-container { margin-top: 30px; }
     </style>
 </head>
@@ -92,13 +117,17 @@ mysqli_query($conn, $sql_insert);
                     </script>
                 </form>
             </div>
-            
-            <div class="mt-4">
-                <small class="text-muted">Referencia: <?php echo $referencia; ?></small>
+
+            <p class="mt-4 small text-muted">
+                No cierres esta pestaña hasta ver la confirmación de Wompi.<br>
+                La venta se registra automáticamente cuando el pago es aprobado.
+            </p>
+            <div class="mt-2">
+                <small class="text-muted">Referencia: <?php echo htmlspecialchars($referencia); ?></small>
             </div>
         </div>
         <div class="mt-3">
-            <a href="pos.php" class="text-decoration-none" style="color: #666;">&larr; Cancelar y volver</a>
+            <a href="https://donjorgito.shop/g502/publico1/" class="text-decoration-none" style="color: #666;">&larr; Cancelar y volver</a>
         </div>
     </div>
 </body>

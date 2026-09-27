@@ -24,8 +24,8 @@ if (!filter_var($orderId, FILTER_VALIDATE_INT)) {
 }
 
 // 3. Consulta de los detalles del pedido, usando tus columnas:
-// nombre_producto, caracteristica, cantidad, precio_unitario, y total
-$sql = "SELECT nombre_producto, caracteristica, cantidad, precio_unitario, total 
+// nombre_producto, caracteristica, cantidad, precio_unitario, total y ean
+$sql = "SELECT nombre_producto, caracteristica, cantidad, precio_unitario, total, ean 
         FROM detalle_pedido 
         WHERE id_pedido = ?";
 

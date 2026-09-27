@@ -4,7 +4,7 @@
 $host = 'localhost'; // Normalmente 'localhost' si usas XAMPP/WAMP/MAMP
 $user = 'root';      // Tu usuario de MySQL (comúnmente 'root' para entornos de desarrollo)
 $password = '';      // Tu contraseña de MySQL (comúnmente vacío '' para 'root' en XAMPP/WAMP/MAMP)
-$database = 'dios2'; // ¡Tu base de datos se llama dios1!
+$database = 'dios1'; // ¡Tu base de datos se llama dios1!
 
 // Establecer la conexión
 $conn = mysqli_connect($host, $user, $password, $database);

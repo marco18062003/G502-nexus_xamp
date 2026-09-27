@@ -92,131 +92,20 @@ $sql = "SELECT * FROM donjorgito1
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/styleme.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/buscar.css?v=1730030000">
     <link rel="stylesheet" type="text/css" href="assets/css/estilosbuscar.css"> 
-
-    <link rel="stylesheet" type="text/css" 
-      href="assets/css/style.css?v=1730030000">
-
-     <link rel="stylesheet" type="text/css" 
-      href="assets/css/buscar.css?v=1730030000">
-
-    <link rel="stylesheet" type="text/css" 
-      href="assets/css/styleme.css?v=1730030000">
+    <link rel="stylesheet" type="text/css" href="assets/css/estilosindex.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/mobile.css">
     
-    <link rel="stylesheet" type="text/css" 
-      href="assets/css/sectionmain.css?v=1730030000">
+
     
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/estilosbuscar.css?v=1730030000">
       
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/estilos.css?v=1730030000">
-
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/sectioncategorias.css?v=1730030000">
-
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/v¿¿carusell.css?v=1730030000">
-
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/newproducts.css?v=1730030000">
 
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
       rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        /* --- CONFIGURACIÓN DE 2 COLUMNAS g502 --- */
-
-/* --- AJUSTE DE PROPORCIÓN g502 --- */
-
-.products-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important; 
-    gap: 10px !important; /* Espacio más pequeño para ganar área */
-    padding: 8px;
-}
-
-.product-card {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 8px; /* Reducimos padding interno para ganar espacio */
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-/* Ajuste de Imagen para que no robe tanto espacio vertical */
-.product-image {
-    width: 100%;
-    height: 120px; /* Reducido un poco para dar aire al texto */
-    object-fit: contain;
-    margin-bottom: 5px;
-}
-
-/* Títulos con proporción: evitamos que empujen todo hacia abajo */
-.product-title {
-    font-size: 0.85rem !important; /* Más pequeño para que no se vea apretado */
-    line-height: 1.2;
-    height: 32px; /* Forzamos máximo 2 líneas */
-    overflow: hidden;
-    margin-bottom: 5px;
-    text-align: center;
-}
-
-/* Precio con destaque pero sin ocupar mucho */
-.product-price {
-    font-size: 1rem !important;
-    font-weight: bold;
-    color: #28a745;
-    margin-bottom: 8px;
-    text-align: center;
-}
-
-/* Controles de cantidad: Los hacemos más compactos */
-.quantity-control {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    width: 90%; /* Que no sea tan ancho */
-    margin: 0 auto 8px auto; 
-    overflow: hidden;
-}
-
-.quantity-btn {
-    padding: 4px 8px !important; /* Botones más pequeños */
-    font-size: 0.8rem;
-}
-
-.quantity-input {
-    width: 30px !important; /* Input más angosto */
-    font-size: 0.85rem;
-    padding: 4px 0;
-}
-
-/* Botón de agregar: Texto más pequeño para que no se corte */
-.add-to-cart-btn {
-    font-size: 0.75rem !important; 
-    padding: 8px 5px !important;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-/* --- RESPONSIVO PC --- */
-@media (min-width: 768px) {
-    .products-grid {
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 20px !important;
-    }
-    .product-image { height: 180px; }
-    .product-title { font-size: 1rem !important; height: auto; }
-}
-    </style>
+    
 </head>
 <body>
 <?php include 'includes/header.php'; ?>
@@ -282,7 +171,7 @@ $sql = "SELECT * FROM donjorgito1
                             <p class="product-category"><?php echo htmlspecialchars($row['caracteristica']); ?></p>
 
                             <?php if ($is_logged_in): ?>
-                                <p class="product-price">$<?php echo number_format($row['precio'], 0, ',', '.'); ?></p>
+                                <p class="product-price">$<?php echo number_format($row['value_final'], 0, ',', '.'); ?></p>
                             <?php endif; ?>
 
                             <div class="quantity-control">

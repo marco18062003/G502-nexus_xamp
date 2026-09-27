@@ -1,0 +1,404 @@
+/* ==========================================================================
+   DON JORGITO — ADVANCED RESPONSIVE STYLESHEET
+   Optimizaciones avanzadas para móvil, tablet y pantallas táctiles.
+   ========================================================================== */
+
+/* ---------- REGLAS GLOBALES Y PANTALLAS TÁCTILES ---------- */
+:root {
+  --nav-bottom-height: 65px;
+  --touch-target-min: 44px;
+}
+
+/* Ocultar elementos exclusivos de móvil por defecto en escritorio */
+.dj-only-mobile {
+  display: none !important;
+}
+
+/* Utilidad de accesibilidad para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Mejora de scroll horizontal para carruseles de productos en móvil */
+.dj-scroller {
+  display: flex;
+  gap: var(--space-sm, 0.75rem);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none; /* Firefox */
+}
+
+.dj-scroller::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.dj-scroller > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ---------- TABLET (max-width: 1024px) ---------- */
+@media (max-width: 1024px) {
+  .dj-grid { 
+    --cols: 3; 
+  }
+
+  .dj-perks {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm, 0.75rem);
+  }
+
+  .dj-seal {
+    width: 65px;
+    height: 65px;
+    top: 0.85rem;
+    left: 0.85rem;
+  }
+  
+  .dj-seal-text { 
+    font-size: 0.55rem; 
+    line-height: 1.1;
+  }
+
+  .dj-ofertas-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ---------- TABLET PEQUEÑA / MOBILE LANDSCAPE (max-width: 900px) ---------- */
+@media (max-width: 900px) {
+  /* Activar elementos exclusivos de móvil */
+  .dj-only-mobile { 
+    display: block !important; 
+  }
+
+  /* Layout */
+  .dj-grid { 
+    --cols: 2; 
+  }
+  
+  /* Header simplificado */
+  .dj-nav-links, 
+  .dj-desktop-search { 
+    display: none !important; 
+  }
+
+  .dj-hamburger { 
+    display: flex !important; 
+    align-items: center;
+    justify-content: center;
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+  }
+
+  /* Compensación para barra inferior en móvil */
+  body { 
+    padding-bottom: var(--nav-bottom-height); 
+  }
+
+  /* ==========================================================================
+     BARRA DE BÚSQUEDA MÓVIL (DISEÑO PREMIUM GLASSMORPISM)
+     ========================================================================== */
+  .dj-mobile-search-row {
+    width: 100%;
+    padding: 0.6rem 0 0.4rem;
+  }
+
+  .dj-mobile-search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 0.35rem 0.4rem 0.35rem 0.85rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Resplandor y animación al interactuar */
+  .dj-mobile-search-form:focus-within {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--gold, #d4af37);
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.25),
+                0 4px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 0.6rem;
+  }
+
+  .search-input-wrapper .search-icon {
+    color: var(--gold, #d4af37);
+    font-size: 0.95rem;
+    transition: transform 0.25s ease;
+  }
+
+  .dj-mobile-search-form:focus-within .search-icon {
+    transform: scale(1.15);
+  }
+
+  .dj-mobile-search-form input[type="search"] {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+
+  .dj-mobile-search-form input[type="search"]::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.82rem;
+  }
+
+  .dj-mobile-search-form input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* Botón con degradado dorado Premium */
+  .dj-mobile-search-form .search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #e6ca65 0%, #d4af37 50%, #aa820a 100%);
+    color: #0d0d0d;
+    border: none;
+    padding: 0.55rem 0.95rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .dj-mobile-search-form .search-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 4px rgba(212, 175, 55, 0.2);
+  }
+
+  .dj-mobile-search-form .search-btn i {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+  }
+
+  .dj-mobile-search-form .search-btn:hover i {
+    transform: translateX(2px);
+  }
+
+  /* Chips de categorías */
+  .dj-chip-row {
+    display: flex !important;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none; /* Firefox */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dj-chip-row::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .dj-chip {
+    padding: 0.4rem 0.85rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--text, #fff);
+    white-space: nowrap;
+    text-decoration: none;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .dj-chip.is-active {
+    background: var(--gold, #d4af37);
+    color: #000;
+    border-color: var(--gold, #d4af37);
+    font-weight: 600;
+  }
+
+  /* Footer simplificado */
+  .dj-footer-grid { 
+    grid-template-columns: 1fr; 
+    text-align: center; 
+    gap: var(--space-md, 1.5rem); 
+  }
+
+  .dj-social { 
+    justify-content: center; 
+  }
+
+  /* Contenido destacado */
+  .dj-feature-main { 
+    min-height: 260px; 
+  }
+
+  .dj-mini-grid { 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+  }
+
+  .dj-banner-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ---------- SMARTPHONES (max-width: 640px) ---------- */
+@media (max-width: 640px) {
+  .dj-grid { 
+    --cols: 1; 
+  }
+
+  /* Hero Rediseñado */
+  .dj-hero { 
+    min-height: 55vh; 
+    text-align: left; 
+    padding-block: var(--space-md, 1.5rem);
+  }
+
+  .dj-hero-content { 
+    max-width: 100%; 
+  }
+
+  .dj-hero-content h1 {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    line-height: 1.2;
+  }
+
+  .dj-hero-content .dj-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Tarjetas y carruseles táctiles */
+  .dj-card {
+    width: clamp(140px, 42vw, 165px);
+  }
+
+  .dj-card-body {
+    padding: 0.6rem 0.65rem 0.8rem;
+  }
+
+  .dj-card-name {
+    font-size: 0.8rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .dj-circle {
+    width: 76px;
+  }
+
+  .dj-circle-frame {
+    width: 62px;
+    height: 62px;
+    font-size: 1.15rem;
+  }
+
+  /* Rediseño de Grilla Promocional en móvil */
+  .dj-mini-grid { 
+    grid-template-columns: 1fr; 
+    gap: 0.6rem;
+  }
+
+  .dj-mini-item {
+    min-height: 80px;
+    padding: 0.5rem;
+  }
+
+  /* Banners integrados */
+  .dj-banner {
+    padding: var(--space-sm, 1rem);
+    min-height: 160px;
+  }
+
+  .dj-banner-content h3 {
+    font-size: 1.25rem;
+  }
+
+  /* Perks compactos */
+  .dj-perks {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .dj-perk {
+    padding: 0.6rem 0.5rem;
+    text-align: center;
+  }
+
+  .dj-perk h5 {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .dj-perk p {
+    font-size: 0.68rem;
+    line-height: 1.2;
+  }
+
+  .dj-section-title {
+    margin-bottom: var(--space-sm, 1rem);
+    font-size: 1.3rem;
+  }
+}
+
+/* ---------- PANTALLAS ULTRA PEQUEÑAS (max-width: 360px) ---------- */
+@media (max-width: 360px) {
+  .dj-mobile-search-form .search-btn span {
+    display: none; /* Oculta el texto "Buscar" y deja solo la flecha para evitar desbordamiento */
+  }
+
+  .dj-mobile-search-form .search-btn {
+    padding: 0.55rem 0.75rem;
+  }
+
+  .dj-card {
+    width: 130px;
+  }
+
+  .dj-brand {
+    font-size: 1.15rem;
+  }
+
+  .dj-btn {
+    padding: 0.65rem 1rem;
+    font-size: 0.7rem;
+  }
+
+  .dj-perks {
+    grid-template-columns: 1fr;
+  }
+}

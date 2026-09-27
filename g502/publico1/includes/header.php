@@ -1,3 +1,16 @@
+<?php
+$categorias_unicas = [];
+if ($conn) {
+    $sql_categorias_unicas = "SELECT DISTINCT ca FROM donjorgito1 WHERE ca IS NOT NULL AND ca != '' ORDER BY ca ASC";
+    $resultado_categorias_unicas = mysqli_query($conn, $sql_categorias_unicas);
+    if ($resultado_categorias_unicas) {
+        while ($fila = mysqli_fetch_assoc($resultado_categorias_unicas)) {
+            $categorias_unicas[] = htmlspecialchars($fila['ca']);
+        }
+        mysqli_free_result($resultado_categorias_unicas);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,32 +33,8 @@
       href="assets/css/style.css?v=1730030000">
      
 
-    <link rel="stylesheet" type="text/css" 
-      href="assets/css/styleme.css?v=1730030000">
-    
-    <link rel="stylesheet" type="text/css" 
-      href="assets/css/sectionmain.css?v=1730030000">
-    
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/estilosbuscar.css?v=1730030000">
-      
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/estilos.css?v=1730030000">
-
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/sectioncategorias.css?v=1730030000">
-
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/v¿¿carusell.css?v=1730030000">
-
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/newproducts.css?v=1730030000">
-
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/cartdesign.css?v=1730030000">
-
-      <link rel="stylesheet" type="text/css" 
-      href="assets/css/buscar.css?v=1730030000">
+    <link rel="stylesheet" type="text/css" href="assets/css/estilosindex.css?v=1">
+  <link rel="stylesheet" type="text/css" href="assets/css/mobile.css?v=1">
       
     <link
     href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -57,110 +46,187 @@
 
 <body>
     
-  <header class="main-header">
-    <div class="header-content">
-        <div class="header-logo">
-            <a href="index.php">
-               <img src="../images/logo1.png" alt="Tu Logo" width="200" height="100">
-            </a>
-        </div>
+  <!-- ============ HEADER ÚNICO ============ -->
+<header class="dj-nav" role="banner">
+  <div class="dj-container">
+    <div class="dj-nav-row">
+      
+      <!-- Brand Logo -->
+      <a class="dj-brand" href="index.php" aria-label="Ir a la página de inicio">
+        DON JORGITO <small>Licorería</small>
+      </a>
 
-        
-
-        <div class="header-slogan">
-    <?php if ($is_logged_in && isset($_SESSION['nombre_usuario'])): ?>
-        <span>¡Hola! Bienvenido <br> <?php echo htmlspecialchars($_SESSION['nombre_usuario']); ?></span>
-    <?php elseif ($is_logged_in): ?>
-        <span>¡Hola! Bienvenido <br> Usuario</span>
-    <?php else: ?>
-        <span>;)</span>
-    <?php endif; ?>
-</div>
-
-      <div class="header-dropdown-menu">
-        <form id="categoryForm" action="buscar.php" method="GET">
-           <select class="category-select" name="query" aria-label="Seleccionar categoría" style="background-color:#232f3e;color:#f8f8f8" onchange="this.form.submit()">
-            <option selected value="all">Categorías</option>
-            <option value="cerveza">Cerveza</option>
-            <option value="aguardiente">Aguardiente</option>
-            <option value="ron">Ron</option>
-            <option value="whisky">Whisky</option>
-            <option value="vinos">Vinos</option>
-            <option value="cigarrillos">Cigarrillos</option>
-            <option value="comestibles">Comestibles</option>
-            <option value="bebidas">bebidas</option>
-            <option value="cremas">Cremas de whisky</option>
-            <option value="Champaña">Champaña</option>
-            <option value="Brandy">Brandy</option>
-            <option value="Tequila">Tequila</option>
-            <option value="Aperitivo">Aperitivo</option>
-            <option value="Desechables">Desechables</option>
-            <option value="Limpieza">Limpieza</option>
-            <option value="Personal">Personal</option>
-            <option value="otros">otros</option>
-            <option value="Promoxiones">Promoxiones</option>
-            
-          </select>
+      <!-- Buscador principal (Desktop) -->
+      <div class="dj-search-bar dj-desktop-search">
+        <label for="buscador-desktop" class="sr-only">Buscar productos</label>
+        <i class="fas fa-search dj-search-icon" aria-hidden="true"></i>
+        <form action="buscar.php" method="GET" class="dj-search-form" role="search">
+          <input 
+            type="search" 
+            name="query" 
+            id="buscador-desktop" 
+            placeholder="Buscar " 
+            value="<?php echo isset($_GET['query']) ? htmlspecialchars($_GET['query']) : ''; ?>"
+            autocomplete="off"
+            aria-label="Buscar licores"
+          >
         </form>
       </div>
 
-        <div class="header-search">
-    <div class="autocomplete-wrapper"> 
-        <form action="buscar.php" method="GET">
-            <div class="search-container">
-                <input type="text" placeholder="Buscar productos..." name="query" class="search-input" id="buscador"> 
-                <button type="submit" class="search-icon">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </form>
-        
-        <div id="resultados-busqueda" class="autocomplete-dropdown">
-            </div>
+      <!-- Links (Desktop) -->
+      <nav class="dj-nav-links" aria-label="Navegación principal">
+        <a href="brand.php">Marcas</a>
+        <a href="buscar.php?query=aguardiente">Más vendidos</a>
+        <a href="ofertas.php">Promociones</a>
+        <a href="newproducts.php">Nuevo</a>
+        <a href="weabout.php">Nosotros</a>
+      </nav>
+
+      <!-- User Actions -->
+      <div class="dj-nav-actions">
+        <?php if ($is_logged_in): ?>
+          <a class="dj-icon-btn" href="../users/mi_panel.php" aria-label="Mi cuenta" title="¡Hola, <?php echo $user_name; ?>!">
+            <i class="fas fa-user" aria-hidden="true"></i>
+          </a>
+        <?php else: ?>
+          <a class="dj-icon-btn" href="login.php" aria-label="Iniciar sesión">
+            <i class="fas fa-user" aria-hidden="true"></i>
+          </a>
+        <?php endif; ?>
+
+        <a class="dj-icon-btn" href="favoritos.php" aria-label="Mis favoritos">
+          <i class="fas fa-heart" aria-hidden="true"></i>
+        </a>
+
+        <a class="dj-icon-btn" href="ver_carrito.php" aria-label="Ver carrito de compras">
+          <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+          <?php $cart_count = $_SESSION['cart_count'] ?? 0; ?>
+          <span
+            id="cart-counter"
+            class="dj-badge-dot"
+            style="<?php echo $cart_count > 0 ? '' : 'display:none;'; ?>"
+          ><?php echo (int)$cart_count; ?></span>
+        </a>
+
+        <button 
+          class="dj-hamburger" 
+          id="dj-menu-toggle" 
+          aria-label="Abrir menú de navegación" 
+          aria-expanded="false" 
+          aria-controls="dj-drawer"
+        >
+          <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+      </div>
+
     </div>
+
+    <!-- ========================================================= -->
+    <!-- ELEMENTOS EXCLUSIVOS DE MÓVIL                             -->
+    <!-- ========================================================= -->
+
+    <!-- Buscador dedicado (Móvil) -->
+    <!-- Barra de búsqueda exclusiva para móvil (Diseño Premium) -->
+<div class="dj-mobile-search-row dj-only-mobile">
+  <form action="buscar.php" method="GET" class="dj-mobile-search-form" role="search">
+    <label for="buscador-mobile" class="sr-only">Buscar en la tienda</label>
+    
+    <div class="search-input-wrapper">
+      <i class="fas fa-search search-icon" aria-hidden="true"></i>
+      <input 
+        type="search" 
+        name="query" 
+        id="buscador-mobile"
+        placeholder="buscar1" 
+        value="<?php echo isset($_GET['query']) ? htmlspecialchars($_GET['query']) : ''; ?>"
+        aria-label="Buscar en la tienda"
+        autocomplete="off"
+      >
+    </div>
+
+    <button type="submit" class="search-btn" aria-label="Buscar">
+      <span>Buscar</span>
+      <i class="fas fa-arrow-right" aria-hidden="true"></i>
+    </button>
+  </form>
 </div>
 
+    <!-- Chips de Categoría (Móvil) -->
+    
 
-        <div class="header-user-actions" >
-            <a href="login.php" class="action-item" style="color:#333" aria-label="Mi Cuenta">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user" style="color:#333">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-    </svg>
-    <span>Cuenta</span>
-</a>
-            <a href="favoritos.php" class="action-item" aria-label="Mis Favoritos" style="color:#333">
-                <svg xmlns="http://www.w3.org/2000/svg" style="color:#333" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-                <span>Favoritos</span>
-            </a>
-            <a href="ver_carrito.php" class="action-item cart-item" aria-label="Ver Carrito" style="color:#333">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="color:#333" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-cart">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
-                
-                <span>Carrito</span>
-            </a>
-        </div>
-    </div>
-
-    <div>
-        <div id="boton-menu" style="color: white; cursor: pointer; padding: 10px; background: #232f3e; text-align: center;">
-    <i class="fas fa-bars"></i> 
-</div>
-         <nav class="secondary-nav" style="text-align: center">
-             <ul>
-                 <li><a href="brand.php">Marcas</a></li>
-                 <li><a href="buscar.php?query=aguardiente">Mas Vendidos</a></li>
-                <li><a href="buscar.php?query=cigarrillos">Promociones</a></li>
-                <li><a href="buscar.php?query=comestibles">Descuestos</a></li>
-                <li><a href="hire2.php">Contratar</a></li>
-                <li> <a href="weabout.php">Sobre Nosotros</a></li> 
-                <li><a href="newproducts.php">Nuevo</a></li> </ul>
-         </nav> 
-    </div> 
-
+  </div>
 </header>
+
+<!-- Menú lateral móvil (drawer) -->
+<div class="dj-drawer" id="dj-drawer" aria-hidden="true">
+  <div class="dj-drawer-backdrop" id="dj-drawer-backdrop"></div>
+  <nav class="dj-drawer-panel" aria-label="Menú móvil">
+    <button class="dj-drawer-close" id="dj-drawer-close" aria-label="Cerrar menú"><i class="fas fa-xmark"></i></button>
+    <div class="dj-select-wrap">
+      <form action="buscar.php" method="GET">
+        <select class="dj-select" name="query" onchange="this.form.submit()">
+          <option selected value="all">Categorías</option>
+          <?php foreach ($categorias_unicas as $cat): ?>
+            <option value="<?php echo htmlspecialchars($cat); ?>"><?php echo htmlspecialchars($cat); ?></option>
+          <?php endforeach; ?>
+        </select>
+      </form>
+    </div>
+    <a href="brand.php">Marcas</a>
+    <a href="scannerme/index.php">Scanner</a>
+    <a href="buscar.php?query=aguardiente">Más vendidos</a>
+    <a href="buscar.php?query=cigarrillos">Promociones</a>
+    <a href="hire2.php">Contratar</a>
+    <a href="weabout.php">Sobre nosotros</a>
+    <a href="newproducts.php">Nuevo</a>
+  </nav>
+</div>
+
+<!-- Contenedor de notificaciones toast (usado por carrito.js) -->
+<div id="toast-container"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('dj-menu-toggle');
+  const drawer    = document.getElementById('dj-drawer');
+  const backdrop  = document.getElementById('dj-drawer-backdrop');
+  const closeBtn  = document.getElementById('dj-drawer-close');
+  let lastFocusedEl;
+
+  if (!toggleBtn || !drawer) return;
+
+  const openDrawer = () => {
+    lastFocusedEl = document.activeElement;
+    drawer.classList.add('is-open');
+    drawer.setAttribute('aria-hidden', 'false');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('dj-drawer-locked');
+    closeBtn?.focus();
+    document.addEventListener('keydown', onKeydown);
+  };
+
+  const closeDrawer = () => {
+    drawer.classList.remove('is-open');
+    drawer.setAttribute('aria-hidden', 'true');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('dj-drawer-locked');
+    document.removeEventListener('keydown', onKeydown);
+    lastFocusedEl?.focus();
+  };
+
+  const onKeydown = (e) => {
+    if (e.key === 'Escape') closeDrawer();
+  };
+
+  toggleBtn.addEventListener('click', () => {
+    drawer.classList.contains('is-open') ? closeDrawer() : openDrawer();
+  });
+  closeBtn?.addEventListener('click', closeDrawer);
+  backdrop?.addEventListener('click', closeDrawer);
+
+  // Cierra el drawer si la ventana pasa a tamaño de escritorio
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 900 && drawer.classList.contains('is-open')) closeDrawer();
+  });
+});
+</script>

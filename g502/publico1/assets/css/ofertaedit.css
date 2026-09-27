@@ -1,0 +1,414 @@
+/* ============================================================
+   ofertaedit.css — Panel de gestión de ofertas (Dorado & Negro)
+   ============================================================ */
+
+:root {
+    --gold: #d4af37;
+    --gold-light: #f4e5b2;
+    --gold-dark: #a8860f;
+    --black: #0d0d0d;
+    --black-soft: #1a1a1a;
+    --gray-dark: #2b2b2b;
+    --white: #ffffff;
+}
+
+.oe-body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Open Sans', Arial, sans-serif;
+    min-height: 100vh;
+}
+
+.oe-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 30px 16px 60px;
+}
+
+.oe-heading {
+    color: var(--white);
+    border-left: 5px solid var(--gold);
+    padding-left: 14px;
+    margin-bottom: 24px;
+}
+
+.oe-heading i {
+    color: var(--gold);
+    margin-right: 8px;
+}
+
+/* ---------- Tarjetas ---------- */
+.oe-card {
+    background: var(--black-soft);
+    border: 1px solid var(--gold-dark);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.oe-card h2 {
+    color: var(--gold);
+    font-size: 1.15rem;
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+/* ---------- Formulario ---------- */
+.oe-field {
+    margin-bottom: 18px;
+    position: relative;
+}
+
+.oe-field label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.oe-field input[type="text"],
+.oe-field input[type="number"] {
+    width: 100%;
+    background: var(--black);
+    border: 1px solid var(--gold-dark);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--white);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.oe-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+}
+
+/* ---------- Buscador con resultados flotantes ---------- */
+.oe-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--black);
+    border: 1px solid var(--gold-dark);
+    border-radius: 8px;
+    margin-top: 4px;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 20;
+    display: none;
+}
+
+.oe-search-results.show {
+    display: block;
+}
+
+.oe-search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--gray-dark);
+    transition: background 0.15s ease;
+}
+
+.oe-search-result-item:last-child {
+    border-bottom: none;
+}
+
+.oe-search-result-item:hover {
+    background: var(--gray-dark);
+}
+
+.oe-search-result-item img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    background: var(--white);
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.oe-search-result-name {
+    font-size: 0.88rem;
+    color: var(--white);
+}
+
+.oe-search-result-meta {
+    font-size: 0.75rem;
+    color: var(--gold-light);
+}
+
+.oe-search-empty {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    color: var(--gray-dark);
+    color: #999;
+}
+
+/* ---------- Producto seleccionado ---------- */
+.oe-selected-product {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--black);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+}
+
+.oe-selected-product img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    background: var(--white);
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.oe-selected-name {
+    margin: 0;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.oe-selected-meta {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: var(--gold-light);
+}
+
+.oe-clear-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--gold-light);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.oe-clear-btn:hover {
+    color: var(--gold);
+}
+
+/* ---------- Radios y checkbox ---------- */
+.oe-radio-group {
+    display: flex;
+    gap: 20px;
+}
+
+.oe-radio,
+.oe-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.oe-checkbox-field {
+    margin-top: -6px;
+}
+
+.oe-price-preview {
+    margin: 8px 0 0;
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-weight: 600;
+    min-height: 1.2em;
+}
+
+/* ---------- Botones ---------- */
+.oe-form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.oe-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: filter 0.2s ease, transform 0.15s ease;
+}
+
+.oe-btn-primary {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+    color: var(--black);
+}
+
+.oe-btn-primary:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+}
+
+.oe-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.oe-btn-secondary {
+    background: transparent;
+    border: 1px solid var(--gold-dark);
+    color: var(--gold-light);
+}
+
+.oe-btn-secondary:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+/* ---------- Tabla de ofertas ---------- */
+.oe-empty {
+    color: var(--gold-light);
+    opacity: 0.8;
+}
+
+.oe-table-wrap {
+    overflow-x: auto;
+}
+
+.oe-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.oe-table th {
+    text-align: left;
+    color: var(--gold);
+    border-bottom: 1px solid var(--gold-dark);
+    padding: 10px 8px;
+    white-space: nowrap;
+}
+
+.oe-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--gray-dark);
+    vertical-align: middle;
+}
+
+.oe-td-product {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+}
+
+.oe-td-product img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    background: var(--white);
+    border-radius: 4px;
+}
+
+.oe-td-final-price {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.oe-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.oe-status-active {
+    background: rgba(46, 125, 50, 0.2);
+    color: #4caf50;
+}
+
+.oe-status-inactive {
+    background: rgba(198, 40, 40, 0.2);
+    color: #ef5350;
+}
+
+.oe-td-actions {
+    white-space: nowrap;
+}
+
+.oe-icon-btn {
+    background: var(--black);
+    border: 1px solid var(--gold-dark);
+    color: var(--gold);
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    margin-right: 6px;
+    transition: background 0.15s ease;
+}
+
+.oe-icon-btn:hover {
+    background: var(--gold-dark);
+    color: var(--black);
+}
+
+.oe-delete-btn:hover {
+    background: #c0392b;
+    border-color: #c0392b;
+    color: var(--white);
+}
+
+/* ---------- Toasts (mismos estilos que buscar.css) ---------- */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    min-width: 250px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast.success {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+    color: var(--black);
+}
+
+.toast.error {
+    background: var(--black-soft);
+    color: var(--gold-light);
+    border: 1px solid #c0392b;
+}
+
+@media (max-width: 480px) {
+    #toast-container {
+        left: 12px;
+        right: 12px;
+    }
+    .toast {
+        min-width: unset;
+        width: 100%;
+    }
+}

@@ -1,68 +1,44 @@
 <?php
+// Ver nota de blindaje de salida en preparar_pago_wompi.php: evita que un
+// warning/notice de PHP ensucie la respuesta JSON que espera el navegador.
+ob_start();
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+
 session_start();
 require_once '../config/db.php'; // Aquí ya viene definida tu variable $conn
+require_once 'ventas_helper.php';
 
+ob_clean();
 header('Content-Type: application/json');
 
-// Recibimos la información del JSON enviado por JS
-$data = json_decode(file_get_contents('php://input'), true);
-
-if (!$data || empty($data['productos'])) {
-    echo json_encode(['status' => 'error', 'message' => 'El carrito está vacío']);
+function responderJsonFactura(array $payload): void
+{
+    if (ob_get_length()) {
+        ob_clean();
+    }
+    echo json_encode($payload);
     exit;
 }
 
-// 1. Iniciar Transacción en MySQLi
-mysqli_begin_transaction($conn);
-
-try {
-    // Datos de la factura_base
-    $numeroFactura = "FAC-" . strtoupper(substr(uniqid(), -5));
-    $cajeroId = $_SESSION['user_id'] ?? 1;
-    $clienteId = 1;
-    $subtotal = $data['total'];
-    $impuestos = 0;
-    $total = $data['total'];
-    $metodo_pago = $data['metodo_pago'];
-    $cambio = $data['cambio'];
-    $estado = 'Completada';
-
-    // 2. Insertar en factura_base
-    $sqlBase = "INSERT INTO factura_base (numero_factura, fecha_venta, cliente_id, cajero_id, subtotal, impuestos, total, metodo_pago, estado, cambio) 
-                VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?)";
-    
-    $stmtBase = mysqli_prepare($conn, $sqlBase);
-    mysqli_stmt_bind_param($stmtBase, "siidddsss", $numeroFactura, $clienteId, $cajeroId, $subtotal, $impuestos, $total, $metodo_pago, $estado, $cambio);
-    
-    if (!mysqli_stmt_execute($stmtBase)) {
-        throw new Exception("Error en factura_base: " . mysqli_error($conn));
-    }
-
-    $ventaId = mysqli_insert_id($conn); // Obtenemos el ID generado
-
-    // 3. Insertar en factura (detalle)
-    $sqlDetalle = "INSERT INTO factura (venta_id, producto_id, nombre_producto, precio_unidad, cantidad, subtotal_item) 
-                   VALUES (?, ?, ?, ?, ?, ?)";
-    $stmtDetalle = mysqli_prepare($conn, $sqlDetalle);
-
-    foreach ($data['productos'] as $prod) {
-        $subtotalItem = $prod['precio'] * $prod['cantidad'];
-        mysqli_stmt_bind_param($stmtDetalle, "iisdid", $ventaId, $prod['id'], $prod['nombre'], $prod['precio'], $prod['cantidad'], $subtotalItem);
-        
-        if (!mysqli_stmt_execute($stmtDetalle)) {
-            throw new Exception("Error en detalle de factura: " . mysqli_error($conn));
-        }
-    }
-
-    // Si todo salió bien, guardamos cambios
-    mysqli_commit($conn);
-    echo json_encode(['status' => 'success', 'numero_factura' => $numeroFactura]);
-
-} catch (Exception $e) {
-    // Si algo falló, deshacemos todo para evitar descuadres
-    mysqli_rollback($conn);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+// Recibimos la información del JSON enviado por JS
+$data = json_decode(file_get_contents('php://input'), true);
+if (!$data || empty($data['productos'])) {
+    responderJsonFactura(['status' => 'error', 'message' => 'El carrito está vacío']);
 }
 
-mysqli_close($conn); // Cerramos la conexión al final
-?>
+$cajeroId = $_SESSION['user_id'] ?? 1;
+
+try {
+    $resultado = registrarVenta(
+        $conn,
+        $data['productos'],
+        (float)$data['total'],
+        $data['metodo_pago'],
+        (string)$data['cambio'],
+        (int)$cajeroId
+    );
+    responderJsonFactura($resultado);
+} catch (Exception $e) {
+    responderJsonFactura(['status' => 'error', 'message' => $e->getMessage()]);
+}

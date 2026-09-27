@@ -197,6 +197,11 @@ if ($ip_usuario !== 'NUEVO') {
         <span class="ql-label">Próximos a Vencer</span>
         <span class="ql-arrow">›</span>
     </a>
+    <a href="https://donjorgito.shop/g502/plu/place/upload.php" class="ql-card">
+        <span class="ql-icon"></span>
+        <span class="ql-label">Neveras</span>
+        <span class="ql-arrow">›</span>
+    </a>
     <a href="https://donjorgito.shop/g502/API/ia_scanner.php" class="ql-card">
         <span class="ql-icon"></span>
         <span class="ql-label">Escanear Mediante IA</span>

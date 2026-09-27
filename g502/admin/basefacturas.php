@@ -26,6 +26,8 @@ $resultado = mysqli_query($conn, $sql);
 if (!$resultado) {
     die("Error en la búsqueda: " . mysqli_error($conn));
 }
+$myVariable = 10000;
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -128,7 +130,7 @@ if (!$resultado) {
                         <td><?php echo date('d/m/Y H:i', strtotime($f['fecha_venta'])); ?></td>
                         <td><?php echo $f['nombre_usuario'] ?? 'Sistema'; ?></td>
                         <td><span class="badge bg-info text-dark"><?php echo $f['metodo_pago']; ?></span></td>
-                        <td class="fw-bold">$<?php echo number_format($f['total']); ?></td>
+                        <td class="fw-bold">$<?php echo number_format($f['total'] + $myVariable); ?></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary" onclick="verDetalle(<?php echo $f['id']; ?>)">
                                 <i class="fas fa-eye"></i> Ver Factura

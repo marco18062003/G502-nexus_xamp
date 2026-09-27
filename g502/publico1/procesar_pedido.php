@@ -38,9 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Si hay errores de validación, redirigir o mostrar un mensaje
     if (!empty($errors)) {
-        // Podrías pasar los errores a la página anterior o mostrarlos directamente
-        // Para simplificar, aquí se detiene la ejecución y se muestra el error
-        // En un entorno real, redirigirías a la página del formulario con mensajes de error.
         die("Errores de validación: <br>" . implode("<br>", $errors));
     }
 
@@ -69,9 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_pedido = mysqli_prepare($conn, "INSERT INTO pedidos (nombre_cliente, email_cliente, telefono_cliente, direccion_cliente, ciudad_cliente, total_pedido, estado_pedido) VALUES (?, ?, ?, ?, ?, ?, 'pendiente')");
     
     if ($stmt_pedido === false) {
-        // Log de error y reversión si la preparación falla
         error_log("Error de preparación de statement para pedidos: " . mysqli_error($conn));
-        mysqli_rollback($conn); // Revertir cualquier cosa que se haya hecho
+        mysqli_rollback($conn);
         die("Error interno al procesar el pedido. Por favor, inténtalo de nuevo más tarde. (Código: P1)");
     }
 
@@ -99,10 +95,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $product_id_int = (int)$productId;
             $cantidad_int = (int)$cantidad;
             $precio_unitario_float = (float)$precio_unitario;
+            $total_linea = $precio_unitario_float * $cantidad_int; // Total de esta línea del pedido
 
-            // Prepara la consulta para incluir la característica
-            // 'iissid' -> id_pedido(int), id_producto(int), nombre_producto(string), caracteristica(string), cantidad(int), precio_unitario(double)
-            $stmt_detalle = mysqli_prepare($conn, "INSERT INTO detalle_pedido (id_pedido, id_producto, nombre_producto, caracteristica, cantidad, precio_unitario) VALUES (?, ?, ?, ?, ?, ?)");
+            // --- Obtener el EAN del producto ---
+            // El carrito no guarda el EAN, así que lo buscamos en la tabla productos.
+            // AJUSTA el nombre de la tabla/columnas si en tu BD se llaman distinto.
+            $ean_producto = $item['ean'] ?? null; // por si en algún momento sí viene en el carrito
+
+            if (empty($ean_producto)) {
+                $stmt_ean = mysqli_prepare($conn, "SELECT ean FROM donjorgito1 WHERE id = ? LIMIT 1");
+                if ($stmt_ean !== false) {
+                    mysqli_stmt_bind_param($stmt_ean, "i", $product_id_int);
+                    mysqli_stmt_execute($stmt_ean);
+                    mysqli_stmt_bind_result($stmt_ean, $ean_result);
+                    if (mysqli_stmt_fetch($stmt_ean)) {
+                        $ean_producto = $ean_result;
+                    }
+                    mysqli_stmt_close($stmt_ean);
+                } else {
+                    error_log("Error al preparar la búsqueda de EAN: " . mysqli_error($conn));
+                }
+            }
+            $ean_producto = $ean_producto ?? ''; // fallback para no insertar NULL si la columna no lo permite
+
+            // Prepara la consulta incluyendo total y ean
+            // i(id_pedido) i(id_producto) s(nombre) s(caracteristica) i(cantidad) d(precio_unitario) d(total) s(ean)
+            $stmt_detalle = mysqli_prepare($conn, "INSERT INTO detalle_pedido (id_pedido, id_producto, nombre_producto, caracteristica, cantidad, precio_unitario, total, ean) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             
             if ($stmt_detalle === false) {
                 error_log("Error de preparación de statement para detalle_pedido: " . mysqli_error($conn));
@@ -110,7 +128,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break; // Salir del bucle si hay un error crítico
             }
             
-            mysqli_stmt_bind_param($stmt_detalle, "iissid", $id_pedido, $product_id_int, $nombre_producto, $caracteristica_producto, $cantidad_int, $precio_unitario_float);
+            // i(id_pedido) i(id_producto) s(nombre) s(caracteristica) i(cantidad) d(precio) d(total) s(ean) = 8 tipos, 8 variables
+            mysqli_stmt_bind_param(
+                $stmt_detalle,
+                "iissidds",
+                $id_pedido, $product_id_int, $nombre_producto, $caracteristica_producto,
+                $cantidad_int, $precio_unitario_float, $total_linea, $ean_producto
+            );
 
             if (!mysqli_stmt_execute($stmt_detalle)) {
                 $insert_detalle_success = false;
@@ -130,7 +154,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // 7. Enviar correo electrónico de notificación (al administrador y al cliente)
         
-        // Construir el mensaje de los detalles del pedido para los correos
         $orderDetailsMessage = "";
         foreach ($cartItems as $item) {
             $char_display = !empty($item['caracteristica']) ? " (" . htmlspecialchars($item['caracteristica']) . ")" : "";
@@ -150,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email_message_admin .= "\nAccede a tu panel de administración para ver los detalles completos.";
 
         $headers_admin = "From: " . $from_email . "\r\n";
-        $headers_admin .= "Reply-To: " . $reply_to_email . "\r\n"; // Las respuestas del admin irán a tu correo real
+        $headers_admin .= "Reply-To: " . $reply_to_email . "\r\n";
         $headers_admin .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
         $mail_sent_admin = mail($admin_email, $email_subject_admin, $email_message_admin, $headers_admin);
@@ -168,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email_message_client .= "Atentamente,\nEl equipo de Don Jorgito";
 
         $headers_client = "From: " . $from_email . "\r\n";
-        $headers_client .= "Reply-To: " . $reply_to_email . "\r\n"; // Las respuestas del cliente irán al admin
+        $headers_client .= "Reply-To: " . $reply_to_email . "\r\n";
         $headers_client .= "Content-Type: text/plain; charset=UTF-8\r\n";
         
         $mail_sent_client = mail($email_cliente, $email_subject_client, $email_message_client, $headers_client);
@@ -183,17 +206,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         mysqli_rollback($conn); // Revertir todas las operaciones si algo falló
         error_log("Fallo al procesar pedido completo para cliente: " . $email_cliente . ". Detalles: " . mysqli_error($conn));
-        // Redirigir a la página del carrito con un mensaje de error
         header("Location: ver_carrito.php?error=fallo_al_procesar_pedido");
         exit();
     }
 
 } else {
-    // Si alguien intenta acceder directamente a esta página sin un método POST, redirigir al inicio.
     header("Location: index.php");
     exit();
 }
 
-// Asegúrate de cerrar la conexión a la base de datos al final
 mysqli_close($conn); 
 ?>

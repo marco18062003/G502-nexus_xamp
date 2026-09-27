@@ -18,7 +18,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_rol'] !== 'administrador') {
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');        // <-- ¡¡CORREGIDO A root!!
 define('DB_PASS', '');       
-define('DB_NAME', 'dios2');   // <-- ¡¡CORREGIDO A dios1!!
+define('DB_NAME', 'dios1');   // <-- ¡¡CORREGIDO A dios1!!
 
 // Crear la conexión
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);

@@ -1,5 +1,5 @@
 <?php
-// admin_pedidos.php - Panel de Administración para g502 (Versión Final Corregida y Limpia)
+// admin_pedidos.php - Panel de Administración para g502 (Versión Final Corregida y Limpia + Responsive)
 
 session_start();
 // NOTA: Implementar la verificación de sesión de administrador aquí.
@@ -63,7 +63,7 @@ function render_order_card($pedido, $status) {
     $card .= '<p class="card-text mb-1">Cliente: <strong>' . htmlspecialchars($pedido['nombre_cliente']) . '</strong></p>';
     $card .= '<p class="card-text mb-3 text-muted small">Tel: ' . htmlspecialchars($pedido['telefono_cliente']) . ' - ' . $fecha . '</p>';
 
-    $card .= '<div class="btn-group w-100" role="group">';
+    $card .= '<div class="btn-group action-btn-group w-100" role="group">';
     
     // Botón de Detalles (Abre el modal)
     $card .= '<button type="button" class="btn btn-sm btn-outline-secondary view-details-btn" 
@@ -72,19 +72,19 @@ function render_order_card($pedido, $status) {
                 data-address="' . htmlspecialchars($pedido['direccion_cliente']) . '"
                 data-total="' . htmlspecialchars($pedido['total_pedido']) . '"
                 data-bs-toggle="modal" data-bs-target="#orderDetailsModal">
-                <i class="fas fa-eye"></i> Detalles
+                <i class="fas fa-eye"></i> <span class="btn-label">Detalles</span>
             </button>';
 
     // Botones de Acción según el estado
     if ($status === 'pendiente') {
-        $card .= '<button type="button" class="btn btn-sm btn-primary update-status-btn" data-id="' . $pedido['id'] . '" data-new-status="en_proceso"><i class="fas fa-truck"></i> Procesar</button>';
+        $card .= '<button type="button" class="btn btn-sm btn-primary update-status-btn" data-id="' . $pedido['id'] . '" data-new-status="en_proceso"><i class="fas fa-truck"></i> <span class="btn-label">Procesar</span></button>';
     } elseif ($status === 'en_proceso') {
-        $card .= '<button type="button" class="btn btn-sm btn-success update-status-btn" data-id="' . $pedido['id'] . '" data-new-status="entregado"><i class="fas fa-check"></i> Entregado</button>';
+        $card .= '<button type="button" class="btn btn-sm btn-success update-status-btn" data-id="' . $pedido['id'] . '" data-new-status="entregado"><i class="fas fa-check"></i> <span class="btn-label">Entregado</span></button>';
     }
     
     // Botón de Cancelar, disponible en pendiente y en proceso
     if ($status === 'pendiente' || $status === 'en_proceso') {
-        $card .= '<button type="button" class="btn btn-sm btn-danger update-status-btn" data-id="' . $pedido['id'] . '" data-new-status="cancelado"><i class="fas fa-times"></i> Cancelar</button>';
+        $card .= '<button type="button" class="btn btn-sm btn-danger update-status-btn" data-id="' . $pedido['id'] . '" data-new-status="cancelado"><i class="fas fa-times"></i> <span class="btn-label">Cancelar</span></button>';
     }
     
     // Mensaje para estados finales
@@ -108,7 +108,7 @@ $pedidos_cancelados = get_orders_by_status($conn, 'cancelado');
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Panel de Pedidos - g502</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -118,6 +118,8 @@ $pedidos_cancelados = get_orders_by_status($conn, 'cancelado');
             --primary-dark: #212529;
             --text-light: #f8f9fa;
         }
+        * { box-sizing: border-box; }
+        html, body { overflow-x: hidden; max-width: 100%; }
         body { background-color: #f4f5f7; } /* Fondo más claro */
         .admin-header { 
             background-color: var(--primary-dark); 
@@ -127,15 +129,26 @@ $pedidos_cancelados = get_orders_by_status($conn, 'cancelado');
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         .admin-header .text-muted { color: #aaa !important; }
+        .admin-header h1 { font-size: 1.75rem; margin-bottom: 0; }
+
+        .container { padding-left: 12px; padding-right: 12px; }
         
         /* Pestañas estilo Scrum */
-        .nav-tabs { border-bottom: none; }
+        .nav-tabs { 
+            border-bottom: none; 
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
         .nav-tabs .nav-link { 
             border: none;
             color: #6c757d;
             border-radius: 0;
             margin-right: 15px;
             padding: 10px 20px;
+            white-space: nowrap;
         }
         .nav-tabs .nav-link.active {
             font-weight: bold;
@@ -168,20 +181,25 @@ $pedidos_cancelados = get_orders_by_status($conn, 'cancelado');
         .card-text strong { color: #343a40; }
         
         /* Colores para los estados */
-        /* Pendiente: Advertencia (Amarillo/Naranja) */
         .status-pendiente { background-color: #ffc107 !important; color: #343a40 !important; }
-        /* En Proceso: Principal (Azul) */
         .status-en_proceso { background-color: #007bff !important; color: white !important; }
-        /* Entregado: Éxito (Verde) */
         .status-entregado { background-color: #28a745 !important; color: white !important; }
-        /* Cancelado: Peligro (Rojo) */
         .status-cancelado { background-color: #dc3545 !important; color: white !important; }
         
         .tab-content { min-height: 500px; padding-top: 15px; }
+
+        /* Botones de acción de cada tarjeta */
+        .action-btn-group { flex-wrap: wrap; gap: 6px; }
+        .action-btn-group .btn {
+            flex: 1 1 auto;
+            min-width: 0;
+            border-radius: 6px !important;
+            white-space: nowrap;
+        }
         
         /* FIN: CSS para Diseño Elegante y Oscuro (Optimizado) */
         
-    #map { height: 380px; width: 100%; border-radius: 10px; margin-top: 15px; }
+    #map { height: 380px; width: 100%; max-width: 100%; border-radius: 10px; margin-top: 15px; }
     .route-info {
         display: flex; gap: 10px; flex-wrap: wrap;
         margin-top: 12px;
@@ -203,6 +221,64 @@ $pedidos_cancelados = get_orders_by_status($conn, 'cancelado');
         cursor: pointer; transition: all 0.15s;
     }
     .btn-origin.active { background: #2563eb; color: white; border-color: #2563eb; }
+
+    /* ─── RESPONSIVE: tablets y móviles ─────────────────────────────────── */
+    @media (max-width: 768px) {
+        .admin-header { padding: 14px 0; margin-bottom: 18px; }
+        .admin-header h1 { font-size: 1.4rem; }
+        .admin-header p { font-size: 0.85rem; }
+
+        .nav-tabs .nav-link {
+            padding: 8px 12px;
+            margin-right: 6px;
+            font-size: 0.85rem;
+        }
+
+        .order-card-header { font-size: 1em; padding: 10px 12px; }
+        .card-title { font-size: 1.1em; }
+        .card-body { padding: 12px; }
+
+        /* Botones apilados verticalmente para que el texto no se corte */
+        .action-btn-group {
+            flex-direction: column;
+        }
+        .action-btn-group .btn {
+            width: 100%;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+        }
+
+        #map { height: 260px; }
+
+        .modal-dialog { margin: 0.5rem; }
+        .modal-body { padding: 12px; }
+
+        .route-info { gap: 6px; }
+        .route-pill { font-size: 0.75rem; padding: 5px 10px; }
+
+        .btn-origin { flex: 1 1 auto; text-align: center; font-size: 0.75rem; padding: 8px 6px; }
+    }
+
+    @media (max-width: 420px) {
+        .admin-header h1 { font-size: 1.2rem; }
+        .nav-tabs .nav-link { font-size: 0.78rem; padding: 7px 9px; }
+        .card-title { font-size: 1em; }
+        #map { height: 220px; }
+    }
+
+    /* Tabla de productos: scroll horizontal en vez de desbordar la pantalla */
+    .table-responsive-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    #modal-products-list, .table { font-size: 0.9rem; }
+    @media (max-width: 576px) {
+        .table { font-size: 0.8rem; }
+        .table th, .table td { padding: 0.4rem; }
+    }
 
    </style>
 </head>
@@ -268,7 +344,6 @@ $pedidos_cancelados = get_orders_by_status($conn, 'cancelado');
         <div class="tab-pane fade" id="finalizado" role="tabpanel" aria-labelledby="finalizado-tab">
             <div class="row">
                 <?php 
-                // Unimos y ordenamos por fecha, el más reciente primero
                 $pedidos_finalizados_all = array_merge($pedidos_entregados, $pedidos_cancelados);
                 usort($pedidos_finalizados_all, function($a, $b) {
                     return strtotime($b['fecha_pedido']) - strtotime($a['fecha_pedido']);
@@ -306,18 +381,23 @@ $pedidos_cancelados = get_orders_by_status($conn, 'cancelado');
 
                 <!-- Productos -->
                 <h6>Productos:</h6>
-                <table class="table table-striped table-sm">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Característica</th>
-                            <th class="text-end">Cantidad</th>
-                            <th class="text-end">Precio Unitario</th>
-                            <th class="text-end">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="modal-products-list"></tbody>
-                </table>
+                <div class="table-responsive-wrapper">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                
+                                <th>Producto</th>
+                                <th>Característica</th>
+                                <th class="text-end">Cantidad</th>
+                                <th class="text-end">Precio Unitario</th>
+                                <th class="text-end">Subtotal</th>
+                                <th>codigo</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="modal-products-list"></tbody>
+                    </table>
+                </div>
                 <h5 class="text-end mt-3">
                     Total: <strong class="text-primary" id="modal-order-total"></strong>
                 </h5>
@@ -465,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('modal-order-total').textContent    =
                 '$' + Number(total).toLocaleString('es-CL');
             document.getElementById('modal-products-list').innerHTML    =
-                '<tr><td colspan="5" class="text-center">Cargando...</td></tr>';
+                '<tr><td colspan="6" class="text-center">Cargando...</td></tr>';
 
             // Reset map state
             currentDestination = clientAddress;
@@ -518,6 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
             list.innerHTML = '';
             if (data.success && data.details.length > 0) {
                 data.details.forEach(item => {
+                    const codigo = item.ean || item.codigo || 'N/A';
                     list.insertAdjacentHTML('beforeend', `
                         <tr>
                             <td>${item.nombre_producto}</td>
@@ -525,16 +606,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             <td class="text-end">${item.cantidad}</td>
                             <td class="text-end">$${Number(item.precio_unitario).toLocaleString('es-CL')}</td>
                             <td class="text-end">$${Number(item.total).toLocaleString('es-CL')}</td>
+                            <td>${codigo}</td>
                         </tr>
                     `);
                 });
             } else {
-                list.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Sin productos.</td></tr>';
+                list.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Sin productos.</td></tr>';
             }
         })
         .catch(() => {
             document.getElementById('modal-products-list').innerHTML =
-                '<tr><td colspan="5" class="text-center text-danger">Error de conexión.</td></tr>';
+                '<tr><td colspan="6" class="text-center text-danger">Error de conexión.</td></tr>';
         });
     }
 });

@@ -1,0 +1,144 @@
+/* ============================================================
+   newsproducts.css — Tema Dorado & Negro para Nuevos Lanzamientos
+   ============================================================ */
+
+:root {
+    --gold: #d4af37;
+    --gold-light: #f4e5b2;
+    --gold-dark: #a8860f;
+    --black: #0d0d0d;
+    --black-soft: #1a1a1a;
+    --gray-dark: #2b2b2b;
+    --white: #ffffff;
+}
+
+/* ---------- Grilla de productos nuevos ---------- */
+.grid-nuevos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 8px;
+    margin-top: 20px;
+}
+
+@media (min-width: 768px) {
+    .grid-nuevos {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .grid-nuevos {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* ---------- Tarjeta de producto ---------- */
+.product-item {
+    background: var(--black) !important;
+    border: 1px solid var(--gold-dark) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    overflow: hidden;
+}
+
+.product-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold) !important;
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25) !important;
+}
+
+.product-item img {
+    background: var(--black);
+    transition: transform 0.3s ease;
+}
+
+.product-item:hover img {
+    transform: scale(1.05);
+}
+
+/* ---------- Badge "NUEVO" ---------- */
+.product-item .badge.bg-primary {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold)) !important;
+    color: var(--black) !important;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    padding: 6px 12px;
+    font-weight: 700;
+}
+
+/* ---------- Título y categoría ---------- */
+.product-item h6 {
+    color: var(--white) !important;
+    font-size: 0.95rem;
+    min-height: 2.4em;
+}
+
+.product-item p.text-muted {
+    color: var(--black) !important;
+    background: var(--gold-light);
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.78rem !important;
+}
+
+/* ---------- Bloque de precio ---------- */
+.product-item .bg-light {
+    background: var(--black-soft) !important;
+    border: 1px solid var(--gold-dark);
+}
+
+.product-item .text-primary {
+    color: var(--gold) !important;
+    font-weight: 700;
+}
+
+/* ---------- Botón "Iniciar sesión para ver precio" ---------- */
+.product-item .btn-outline-dark {
+    color: var(--gold) !important;
+    border: 1px solid var(--gold-dark) !important;
+    background: transparent;
+    font-weight: 600;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.product-item .btn-outline-dark:hover {
+    background: var(--gold) !important;
+    color: var(--black) !important;
+    border-color: var(--gold) !important;
+}
+
+/* ---------- Contenedor de texto (padding inferior) ---------- */
+.product-item .p-3 {
+    background: var(--black);
+}
+
+/* ---------- Estado vacío ---------- */
+.grid-nuevos p.text-muted.text-center.w-100 {
+    grid-column: 1 / -1;
+    background: var(--black-soft);
+    border: 1px dashed var(--gold-dark);
+    border-radius: 10px;
+    padding: 30px 20px;
+    color: var(--gold-light) !important;
+    display: block;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+    .grid-nuevos {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .product-item img {
+        height: 150px !important;
+    }
+
+    .product-item h6 {
+        font-size: 0.85rem;
+    }
+}
