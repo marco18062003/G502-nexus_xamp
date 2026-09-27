@@ -256,7 +256,7 @@ function dj_icono_categoria($nombre, $mapa) {
 <!-- ============ MARCAS ============ -->
 <section class="dj-section dj-section--panel">
   <div class="dj-container">
-    <h3 class="dj-section-title"><span>Catálogo</span>Marcas</h3>
+    <h3 class="dj-section-title"><span>Catásssssssssssssssssslogo</span>Marcas</h3>
     <?php if (!empty($marcas_unicas)): ?>
       <div class="dj-scroller">
         <?php foreach ($marcas_unicas as $nombre_marca): ?>
