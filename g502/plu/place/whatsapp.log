@@ -1,0 +1,302 @@
+2026-09-28 20:00:44 | GET from 138.199.50.129 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+2026-09-28 20:00:47 | GET from 138.199.50.129 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+2026-09-28 20:02:01 | GET from 138.199.50.129 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+2026-09-28 20:02:06 | GET from 138.199.50.129 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+2026-09-28 20:06:32 | GET from 138.199.50.129 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+2026-09-28 20:14:17 | GET from 138.199.50.129 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+2026-09-28 20:30:54 | POST from 2a03:2880:30ff:: | Webhooks/1.0 (https://fb.me/webhooks)
+2026-09-28 21:16:36 | POST from 2a03:2880:22ff:: | facebookexternalua
+2026-09-28 21:16:36 | from 573114435729: ping
+2026-09-28 21:16:38 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSOUI0NTkxOENFODEzNzc1MzU4AA=="}]}
+2026-09-28 21:16:39 | POST from 2a03:2880:2ff:5f:: | facebookexternalua
+2026-09-28 21:16:40 | POST from 2a03:2880:21ff:4e:: | facebookexternalua
+2026-09-28 21:17:00 | POST from 2a03:2880:21ff:1:: | facebookexternalua
+2026-09-28 21:17:00 | from 573114435729: ayuda
+2026-09-28 21:17:00 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSQ0JCQkUwRDg5QjExNzUxQzE5AA=="}]}
+2026-09-28 21:17:01 | POST from 2a03:2880:2ff:52:: | facebookexternalua
+2026-09-28 21:17:02 | POST from 2a03:2880:22ff:4f:: | facebookexternalua
+2026-09-28 21:17:30 | POST from 2a03:2880:10ff:45:: | facebookexternalua
+2026-09-28 21:17:30 | from 573114435729: hoy
+2026-09-28 21:17:31 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNDQwMjM3NUMwRjUxRkM1RTVDAA=="}]}
+2026-09-28 21:17:32 | POST from 2a03:2880:10ff:44:: | facebookexternalua
+2026-09-28 21:17:32 | POST from 2a03:2880:10ff:52:: | facebookexternalua
+2026-09-28 21:17:51 | POST from 2a03:2880:22ff:71:: | facebookexternalua
+2026-09-28 21:17:51 | from 573114435729: help
+2026-09-28 21:17:51 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSQjM4QjI0MThGRDZCM0JGRkNCAA=="}]}
+2026-09-28 21:17:52 | POST from 2a03:2880:10ff:9:: | facebookexternalua
+2026-09-28 21:17:52 | POST from 2a03:2880:2ff:8:: | facebookexternalua
+2026-09-28 21:17:58 | POST from 2a03:2880:2ff:51:: | facebookexternalua
+2026-09-28 21:17:58 | from 573114435729: próximos
+2026-09-28 21:17:59 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMUM4QTFCQzI2Mjg0MzI3QzQxAA=="}]}
+2026-09-28 21:18:00 | POST from 2a03:2880:10ff:5c:: | facebookexternalua
+2026-09-28 21:18:00 | POST from 2a03:2880:2ff:73:: | facebookexternalua
+2026-09-28 21:18:20 | POST from 2a03:2880:21ff:4e:: | facebookexternalua
+2026-09-28 21:18:20 | from 573114435729: help
+2026-09-28 21:18:20 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSRDE0MThERkZDM0U0RDEwQjc4AA=="}]}
+2026-09-28 21:18:21 | POST from 2a03:2880:22ff:43:: | facebookexternalua
+2026-09-28 21:18:21 | POST from 2a03:2880:10ff:51:: | facebookexternalua
+2026-09-28 21:18:42 | POST from 2a03:2880:22ff:56:: | facebookexternalua
+2026-09-28 21:18:42 | from 573114435729: plu 1234
+2026-09-28 21:18:42 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNUYxMzhDQTE3N0ZEQTIyOTZGAA=="}]}
+2026-09-28 21:18:43 | POST from 2a03:2880:2ff:59:: | facebookexternalua
+2026-09-28 21:18:43 | POST from 2a03:2880:10ff:9:: | facebookexternalua
+2026-09-28 21:29:09 | POST from 2a03:2880:2ff:54:: | facebookexternalua
+2026-09-28 21:29:09 | Ignored message from unauthorized number 573227784205
+2026-09-28 21:29:16 | POST from 2a03:2880:10ff:9:: | facebookexternalua
+2026-09-28 21:29:16 | Ignored message from unauthorized number 573227784205
+2026-09-28 21:38:29 | POST from 2a03:2880:22ff:4b:: | facebookexternalua
+2026-09-28 21:38:29 | from 573114435729: help
+2026-09-28 21:38:30 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNUUyM0JCQzRGQkFEMzIxQkI5AA=="}]}
+2026-09-28 21:38:31 | POST from 2a03:2880:2ff:47:: | facebookexternalua
+2026-09-28 21:38:31 | POST from 2a03:2880:10ff:43:: | facebookexternalua
+2026-09-28 21:38:31 | POST from 2a03:2880:21ff:9:: | facebookexternalua
+2026-09-28 21:38:36 | POST from 2a03:2880:22ff:47:: | facebookexternalua
+2026-09-28 21:38:36 | from 573114435729: hoy
+2026-09-28 21:38:36 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNkUyRDI4QUI2QjU2MEE2NUVGAA=="}]}
+2026-09-28 21:38:37 | POST from 2a03:2880:22ff:6:: | facebookexternalua
+2026-09-28 21:38:37 | POST from 2a03:2880:22ff:4d:: | facebookexternalua
+2026-09-28 21:38:37 | POST from 2a03:2880:12ff:47:: | facebookexternalua
+2026-09-28 21:42:26 | POST from 2a03:2880:22ff:57:: | facebookexternalua
+2026-09-28 21:42:26 | from 573114435729: help
+2026-09-28 21:42:27 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSN0JFQjNGQUQ4QTAxRDM5NjkwAA=="}]}
+2026-09-28 21:42:27 | POST from 2a03:2880:2ff:43:: | facebookexternalua
+2026-09-28 21:42:28 | POST from 2a03:2880:22ff:47:: | facebookexternalua
+2026-09-28 21:42:28 | POST from 2a03:2880:10ff:7:: | facebookexternalua
+2026-09-28 21:42:44 | POST from 2a03:2880:2ff:55:: | facebookexternalua
+2026-09-28 21:42:44 | from 573114435729: hecho 272988
+2026-09-28 21:42:44 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNkNDNkRBMEIxMjQ3NUQ5RTM4AA=="}]}
+2026-09-28 21:42:45 | POST from 2a03:2880:21ff:59:: | facebookexternalua
+2026-09-28 21:42:45 | POST from 2a03:2880:10ff:56:: | facebookexternalua
+2026-09-28 21:42:45 | POST from 2a03:2880:10ff:53:: | facebookexternalua
+2026-09-28 21:48:16 | POST from 2a03:2880:22ff:4b:: | facebookexternalua
+2026-09-28 21:48:16 | from 573114435729: help
+2026-09-28 21:48:16 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSOUQ1MTExMTBEOTAxRkRBNTRDAA=="}]}
+2026-09-28 21:48:17 | POST from 2a03:2880:21ff:4c:: | facebookexternalua
+2026-09-28 21:48:17 | POST from 2a03:2880:22ff:73:: | facebookexternalua
+2026-09-28 21:48:28 | POST from 2a03:2880:2ff:5:: | facebookexternalua
+2026-09-28 21:48:28 | from 573114435729: *proximos*
+2026-09-28 21:48:29 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSOEQ0MzJCODA4MDZCMzM0QTJEAA=="}]}
+2026-09-28 21:48:30 | POST from 2a03:2880:22ff:54:: | facebookexternalua
+2026-09-28 21:48:30 | POST from 2a03:2880:10ff:56:: | facebookexternalua
+2026-09-28 21:48:30 | POST from 2a03:2880:10ff:52:: | facebookexternalua
+2026-09-28 21:48:39 | POST from 2a03:2880:10ff:52:: | facebookexternalua
+2026-09-28 21:48:39 | from 573114435729: proximos
+2026-09-28 21:48:40 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNDJFRTZBMzVFRkMwQ0JFMEIxAA=="}]}
+2026-09-28 21:48:41 | POST from 2a03:2880:10ff:43:: | facebookexternalua
+2026-09-28 21:48:41 | POST from 2a03:2880:12ff:8:: | facebookexternalua
+2026-09-28 21:48:41 | POST from 2a03:2880:21ff:1:: | facebookexternalua
+2026-09-28 22:00:11 | POST from 2a03:2880:22ff:4d:: | facebookexternalua
+2026-09-28 22:00:11 | from 573114435729: help
+2026-09-28 22:00:11 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMURENDRENzMwNDcwMDgyQUU1AA=="}]}
+2026-09-28 22:00:13 | POST from 2a03:2880:21ff:5:: | facebookexternalua
+2026-09-28 22:00:13 | POST from 2a03:2880:12ff:46:: | facebookexternalua
+2026-09-28 22:00:16 | POST from 2a03:2880:22ff:4a:: | facebookexternalua
+2026-09-28 22:00:16 | from 573114435729: hoy
+2026-09-28 22:00:17 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSRThGMEIyQkJDQTNDOTJDRUNGAA=="}]}
+2026-09-28 22:00:18 | POST from 2a03:2880:22ff:71:: | facebookexternalua
+2026-09-28 22:00:18 | POST from 2a03:2880:2ff:1:: | facebookexternalua
+2026-09-28 22:00:18 | POST from 2a03:2880:22ff:55:: | facebookexternalua
+2026-09-28 22:02:29 | POST from 2a03:2880:22ff:8:: | facebookexternalua
+2026-09-28 22:02:29 | from 573114435729: help
+2026-09-28 22:02:30 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSQkJBRjYyN0VCNzEwNEYzMzdDAA=="}]}
+2026-09-28 22:02:31 | POST from 2a03:2880:10ff:5f:: | facebookexternalua
+2026-09-28 22:02:31 | POST from 2a03:2880:21ff:2:: | facebookexternalua
+2026-09-28 22:02:41 | POST from 2a03:2880:22ff:54:: | facebookexternalua
+2026-09-28 22:02:41 | from 573114435729: vencidos
+2026-09-28 22:02:41 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSN0MzQjVFNUFDQjVBOEJGMDRGAA=="}]}
+2026-09-28 22:02:42 | POST from 2a03:2880:22ff:4c:: | facebookexternalua
+2026-09-28 22:02:42 | POST from 2a03:2880:22ff:4d:: | facebookexternalua
+2026-09-28 22:02:42 | POST from 2a03:2880:2ff:59:: | facebookexternalua
+2026-09-28 22:02:43 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMUVCRUYyNkRDQ0U3REVDQjZGAA=="}]}
+2026-09-28 22:02:44 | POST from 2a03:2880:10ff:52:: | facebookexternalua
+2026-09-28 22:02:44 | POST from 2a03:2880:22ff:5a:: | facebookexternalua
+2026-09-28 22:02:44 | POST from 2a03:2880:22ff:7:: | facebookexternalua
+2026-09-28 22:02:57 | POST from 2a03:2880:2ff:50:: | facebookexternalua
+2026-09-28 22:02:57 | from 573114435729: help
+2026-09-28 22:02:57 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMDMyNTY4OTlEODI3RUU3RDRDAA=="}]}
+2026-09-28 22:02:58 | POST from 2a03:2880:2ff:41:: | facebookexternalua
+2026-09-28 22:02:58 | POST from 2a03:2880:10ff:40:: | facebookexternalua
+2026-09-28 22:02:58 | POST from 2a03:2880:2ff:72:: | facebookexternalua
+2026-09-28 22:03:15 | POST from 2a03:2880:21ff:46:: | facebookexternalua
+2026-09-28 22:03:15 | from 573114435729: plu 1054130
+2026-09-28 22:03:15 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNDUyQUIyMDg5QkRDNzQ1MERFAA=="}]}
+2026-09-28 22:03:16 | POST from 2a03:2880:10ff:4f:: | facebookexternalua
+2026-09-28 22:03:16 | POST from 2a03:2880:2ff:: | facebookexternalua
+2026-09-28 22:03:17 | POST from 2a03:2880:21ff:6:: | facebookexternalua
+2026-09-28 22:03:37 | POST from 2a03:2880:22ff:45:: | facebookexternalua
+2026-09-28 22:03:37 | from 573114435729: help
+2026-09-28 22:03:38 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNzBENTNDQThDNDE3OEUzQTgyAA=="}]}
+2026-09-28 22:03:39 | POST from 2a03:2880:22ff:73:: | facebookexternalua
+2026-09-28 22:03:39 | POST from 2a03:2880:10ff:40:: | facebookexternalua
+2026-09-28 22:03:39 | POST from 2a03:2880:22ff:56:: | facebookexternalua
+2026-09-28 22:15:23 | POST from 2a03:2880:21ff:55:: | facebookexternalua
+2026-09-28 22:15:23 | Ignored message from unauthorized number 573227784205
+2026-09-28 22:15:47 | POST from 2a03:2880:21ff:53:: | facebookexternalua
+2026-09-28 22:15:47 | POST from 2a03:2880:2ff:54:: | facebookexternalua
+2026-09-28 22:15:54 | POST from 2a03:2880:2ff:54:: | facebookexternalua
+2026-09-28 22:15:54 | Ignored message from unauthorized number 573227784205
+2026-09-28 22:16:11 | POST from 2a03:2880:10ff:5:: | facebookexternalua
+2026-09-28 22:16:11 | from 573114435729: ping
+2026-09-28 22:16:12 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSQUY0NDczRTdEOEZGRDRCM0I3AA=="}]}
+2026-09-28 22:16:13 | POST from 2a03:2880:10ff:56:: | facebookexternalua
+2026-09-28 22:16:13 | POST from 2a03:2880:10ff:5a:: | facebookexternalua
+2026-09-28 22:16:13 | POST from 173.252.107.37 | facebookexternalua
+2026-09-28 22:16:21 | POST from 2a03:2880:21ff:3:: | facebookexternalua
+2026-09-28 22:16:21 | Ignored message from unauthorized number 573227784205
+2026-09-28 22:21:20 | POST from 2a03:2880:2ff:55:: | facebookexternalua
+2026-09-28 22:21:20 | from 573227784205: ping
+2026-09-28 22:21:21 | send to 573227784205 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573227784205","wa_id":"573227784205"}],"messages":[{"id":"wamid.HBgMNTczMjI3Nzg0MjA1FQIAERgSQjVENkIyNEREODNDOUQ3Njg0AA=="}]}
+2026-09-28 22:21:23 | POST from 2a03:2880:12ff:70:: | facebookexternalua
+2026-09-28 22:21:23 | POST from 2a03:2880:21ff:3:: | facebookexternalua
+2026-09-28 22:21:26 | POST from 2a03:2880:2ff:5f:: | facebookexternalua
+2026-09-28 22:21:26 | from 573227784205: help
+2026-09-28 22:21:27 | send to 573227784205 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573227784205","wa_id":"573227784205"}],"messages":[{"id":"wamid.HBgMNTczMjI3Nzg0MjA1FQIAERgSMDRGNTcyMjJENkI1MUZGN0U0AA=="}]}
+2026-09-28 22:21:27 | POST from 2a03:2880:21ff:44:: | facebookexternalua
+2026-09-28 22:21:28 | POST from 2a03:2880:21ff:4b:: | facebookexternalua
+2026-09-28 22:29:01 | POST from 2a03:2880:2ff:1:: | facebookexternalua
+2026-09-28 22:29:01 | Ignored message from unauthorized number 573114435729
+2026-09-28 22:29:11 | POST from 2a03:2880:22ff:71:: | facebookexternalua
+2026-09-28 22:29:11 | Ignored message from unauthorized number 573114435729
+2026-09-28 22:29:30 | POST from 2a03:2880:10ff:55:: | facebookexternalua
+2026-09-28 22:29:30 | from 573114435729: ping
+2026-09-28 22:29:30 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMDQ5QjU1RDQ3OTg1NjFENkUwAA=="}]}
+2026-09-28 22:29:31 | POST from 2a03:2880:21ff:7:: | facebookexternalua
+2026-09-28 22:29:31 | POST from 2a03:2880:2ff:59:: | facebookexternalua
+2026-09-28 22:29:31 | POST from 2a03:2880:22ff:9:: | facebookexternalua
+2026-09-28 22:41:37 | POST from 2a03:2880:10ff:58:: | facebookexternalua
+2026-09-28 22:41:37 | from 573114435729: ping
+2026-09-28 22:41:38 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMTYyNzU1NEZCMTU2MDA0RkZGAA=="}]}
+2026-09-28 22:41:38 | POST from 2a03:2880:22ff:: | facebookexternalua
+2026-09-28 22:41:39 | POST from 2a03:2880:22ff:57:: | facebookexternalua
+2026-09-28 22:41:39 | POST from 2a03:2880:10ff:56:: | facebookexternalua
+2026-09-28 22:41:44 | POST from 2a03:2880:21ff:45:: | facebookexternalua
+2026-09-28 22:41:44 | from 573114435729: ping
+2026-09-28 22:41:44 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSOUM1NDNBQTI2MzhCMTMyQzA3AA=="}]}
+2026-09-28 22:41:45 | POST from 2a03:2880:10ff:8:: | facebookexternalua
+2026-09-28 22:41:45 | POST from 2a03:2880:21ff:72:: | facebookexternalua
+2026-09-28 22:41:45 | POST from 2a03:2880:2ff:46:: | facebookexternalua
+2026-09-28 22:41:50 | POST from 2a03:2880:21ff:b:: | facebookexternalua
+2026-09-28 22:41:50 | from 573114435729: help
+2026-09-28 22:41:50 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSRDdERDc2MEQ0N0VCOTBBNUY2AA=="}]}
+2026-09-28 22:41:51 | POST from 2a03:2880:22ff:50:: | facebookexternalua
+2026-09-28 22:41:51 | POST from 2a03:2880:21ff:71:: | facebookexternalua
+2026-09-28 22:41:51 | POST from 2a03:2880:2ff:50:: | facebookexternalua
+2026-09-28 22:53:31 | POST from 2a03:2880:10ff:9:: | facebookexternalua
+2026-09-28 22:53:31 | from 573114435729: https://developers.facebook.com/apps/1550587022876532/use_cases/customize/api-testing-v2/?product_route=whatsapp-business&business_id=1373745304339966&use_case_enum=marketing_api_ads_management&selected_tab=api-testing-v2
+2026-09-28 22:53:32 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMjJDRDlGMzMxMEU1QTg5Qzc2AA=="}]}
+2026-09-28 22:53:33 | POST from 2a03:2880:2ff:4:: | facebookexternalua
+2026-09-28 22:53:33 | POST from 2a03:2880:10ff:71:: | facebookexternalua
+2026-09-28 22:53:33 | POST from 2a03:2880:10ff:5:: | facebookexternalua
+2026-09-28 22:58:23 | POST from 2a03:2880:2ff:47:: | facebookexternalua
+2026-09-28 22:58:23 | from 573114435729: ping
+2026-09-28 22:58:24 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMThBMDVGOTgxNTVEQUYzODkzAA=="}]}
+2026-09-28 22:58:25 | POST from 2a03:2880:12ff:72:: | facebookexternalua
+2026-09-28 22:58:25 | POST from 2a03:2880:10ff:42:: | facebookexternalua
+2026-09-29 07:00:05 | POST from 2a03:2880:21ff:49:: | facebookexternalua
+2026-09-29 07:00:05 | from 573114435729: help
+2026-09-29 07:00:07 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSQTYyQThBRkQxNEYxM0M0MDYzAA=="}]}
+2026-09-29 07:00:08 | POST from 2a03:2880:10ff:11:: | facebookexternalua
+2026-09-29 07:00:08 | POST from 2a03:2880:22ff:48:: | facebookexternalua
+2026-09-29 07:00:20 | POST from 2a03:2880:21ff:56:: | facebookexternalua
+2026-09-29 07:00:20 | from 573114435729: próximos
+2026-09-29 07:00:21 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMjMwMkQzNTE0MzkxQ0RGODk2AA=="}]}
+2026-09-29 07:00:22 | POST from 2a03:2880:10ff:71:: | facebookexternalua
+2026-09-29 07:00:22 | POST from 2a03:2880:10ff:12:: | facebookexternalua
+2026-09-29 08:54:57 | POST from 2a03:2880:10ff:18:: | facebookexternalua
+2026-09-29 08:54:57 | from 573114435729: 3298215 exito
+2026-09-29 08:54:58 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSRjk0QTVCOUY3RjhERUJFMDJEAA=="}]}
+2026-09-29 08:54:59 | POST from 2a03:2880:10ff:43:: | facebookexternalua
+2026-09-29 08:54:59 | POST from 2a03:2880:10ff:8:: | facebookexternalua
+2026-09-29 09:27:07 | POST from 2a03:2880:10ff:70:: | facebookexternalua
+2026-09-29 09:27:07 | from 573114435729: sistemas2028*+
+2026-09-29 09:27:08 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSN0ZFMDg2NjUzRUNCOTE0RTdGAA=="}]}
+2026-09-29 09:27:09 | POST from 2a03:2880:22ff:7:: | facebookexternalua
+2026-09-29 09:27:09 | POST from 2a03:2880:10ff:72:: | facebookexternalua
+2026-10-04 10:43:34 | POST from 2a03:2880:2ff:72:: | facebookexternalua
+2026-10-04 10:43:34 | from 573114435729: hola
+2026-10-04 10:43:35 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMkE2Nzk2NzUzNzlGQTY0RkYwAA=="}]}
+2026-10-04 10:43:37 | POST from 2a03:2880:10ff:58:: | facebookexternalua
+2026-10-04 10:43:37 | POST from 2a03:2880:10ff:57:: | facebookexternalua
+2026-10-04 10:43:37 | from 573114435729: ping
+2026-10-04 10:43:37 | POST from 2a03:2880:2ff:3:: | facebookexternalua
+2026-10-04 10:43:38 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSQ0NDMzMyRkEwOTlDOEIyRkFDAA=="}]}
+2026-10-04 10:43:39 | POST from 2a03:2880:21ff:45:: | facebookexternalua
+2026-10-04 10:43:39 | POST from 2a03:2880:21ff:55:: | facebookexternalua
+2026-10-04 10:43:45 | POST from 2a03:2880:22ff:72:: | facebookexternalua
+2026-10-04 10:43:45 | from 573114435729: ayuda
+2026-10-04 10:43:45 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSRDRCMTkxQUZBMjU1Mjk1M0Q5AA=="}]}
+2026-10-04 10:43:47 | POST from 2a03:2880:22ff:4b:: | facebookexternalua
+2026-10-04 10:43:47 | POST from 2a03:2880:22ff:52:: | facebookexternalua
+2026-10-04 10:44:06 | POST from 2a03:2880:21ff:46:: | facebookexternalua
+2026-10-04 10:44:06 | from 573114435729: hoy
+2026-10-04 10:44:06 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNDYzQjI3RjM3MDhDQkYyREEzAA=="}]}
+2026-10-04 10:44:08 | POST from 2a03:2880:22ff:73:: | facebookexternalua
+2026-10-04 10:44:08 | POST from 2a03:2880:22ff:7:: | facebookexternalua
+2026-10-04 10:44:19 | POST from 2a03:2880:2ff:5:: | facebookexternalua
+2026-10-04 10:44:19 | from 573114435729: proximos
+2026-10-04 10:44:19 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMUU2RTUyRjU5NDExOTEzMzEzAA=="}]}
+2026-10-04 10:44:21 | POST from 2a03:2880:10ff:45:: | facebookexternalua
+2026-10-04 10:44:21 | POST from 2a03:2880:22ff:54:: | facebookexternalua
+2026-10-08 13:48:07 | POST from 2a03:2880:2ff:53:: | facebookexternalua
+2026-10-08 13:48:07 | from 573114435729: help
+2026-10-08 13:48:08 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSRDEyQTU3NzEyOEFDMkE2OUNFAA=="}]}
+2026-10-08 13:48:10 | POST from 2a03:2880:2ff:5f:: | facebookexternalua
+2026-10-08 13:48:11 | POST from 2a03:2880:10ff:: | facebookexternalua
+2026-10-08 13:48:21 | POST from 2a03:2880:2ff:4c:: | facebookexternalua
+2026-10-08 13:48:22 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNUJBRjkxNTIwQzJGRjIzMDVEAA=="}]}
+2026-10-08 13:48:23 | POST from 2a03:2880:21ff:50:: | facebookexternalua
+2026-10-08 13:48:23 | POST from 2a03:2880:2ff:59:: | facebookexternalua
+2026-10-20 07:26:28 | POST from 2a03:2880:2ff:4d:: | facebookexternalua
+2026-10-20 07:26:28 | from 573114435729: help
+2026-10-20 07:26:30 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNjc0RTUyNTVFNDdFNjY0QkQzAA=="}]}
+2026-10-20 07:26:32 | POST from 2a03:2880:2ff:71:: | facebookexternalua
+2026-10-20 07:26:32 | POST from 2a03:2880:21ff:48:: | facebookexternalua
+2026-10-20 07:26:43 | POST from 2a03:2880:10ff:1a:: | facebookexternalua
+2026-10-20 07:26:43 | from 573114435729: hoy
+2026-10-20 07:26:44 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSQTg2MEQ1Q0M3MzNGOUUyNEQwAA=="}]}
+2026-10-20 07:26:45 | POST from 2a03:2880:2ff:8:: | facebookexternalua
+2026-10-20 07:26:45 | POST from 2a03:2880:2ff:2:: | facebookexternalua
+2026-10-20 07:26:56 | POST from 2a03:2880:10ff:14:: | facebookexternalua
+2026-10-20 07:26:56 | from 573114435729: proximos
+2026-10-20 07:26:57 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSRDNCNjI2Rjg2RENBMDg0NjM3AA=="}]}
+2026-10-20 07:26:58 | POST from 2a03:2880:2ff:48:: | facebookexternalua
+2026-10-20 07:26:58 | POST from 2a03:2880:21ff:40:: | facebookexternalua
+2026-10-22 08:29:49 | POST from 2a03:2880:10ff:b:: | facebookexternalua
+2026-10-22 08:29:49 | from 573114435729: help
+2026-10-22 08:29:50 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSNjFBNjY5NUVGQTE4NEE5RUYzAA=="}]}
+2026-10-22 08:29:52 | POST from 2a03:2880:22ff:45:: | facebookexternalua
+2026-10-22 08:29:52 | POST from 2a03:2880:10ff:4b:: | facebookexternalua
+2026-10-22 08:31:11 | POST from 2a03:2880:22ff:49:: | facebookexternalua
+2026-10-22 08:31:11 | from 573114435729: proximos
+2026-10-22 08:31:12 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSRjBFQjFEMDdDNUNFQTQxOUQwAA=="}]}
+2026-10-22 08:31:13 | POST from 2a03:2880:10ff:5:: | facebookexternalua
+2026-10-22 08:31:14 | POST from 2a03:2880:2ff:51:: | facebookexternalua
+2026-10-22 08:38:15 | POST from 2a03:2880:21ff:55:: | facebookexternalua
+2026-10-22 08:38:15 | from 573114435729: help
+2026-10-22 08:38:16 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSM0VCREMxRjI2QkVBQkE2MzI2AA=="}]}
+2026-10-22 08:38:18 | POST from 2a03:2880:22ff:50:: | facebookexternalua
+2026-10-22 08:38:18 | POST from 2a03:2880:10ff:7:: | facebookexternalua
+2026-10-22 08:38:21 | POST from 2a03:2880:10ff:14:: | facebookexternalua
+2026-10-22 08:38:21 | from 573114435729: proximos
+2026-10-22 08:38:21 | send to 573114435729 | HTTP 200 | {"messaging_product":"whatsapp","contacts":[{"input":"573114435729","wa_id":"573114435729"}],"messages":[{"id":"wamid.HBgMNTczMTE0NDM1NzI5FQIAERgSMDI5REQzOTRBQjIzNDEwMkM3AA=="}]}
+2026-10-22 08:38:23 | POST from 2a03:2880:10ff:48:: | facebookexternalua
+2026-10-22 08:38:23 | POST from 2a03:2880:22ff:74:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:49:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:5b:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:40:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:c:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:4a:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:53:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:1:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:9:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:43:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:22ff:52:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:22ff:7:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:2ff:56:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:21ff:41:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:2ff:71:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:10ff:13:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:12ff:47:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:12ff:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:22ff:5a:: | facebookexternalua
+2026-11-03 01:30:19 | POST from 2a03:2880:21ff:9:: | facebookexternalua

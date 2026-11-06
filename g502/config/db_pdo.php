@@ -2,9 +2,9 @@
 // db_pdo.php - Conexión PDO (mismas credenciales que db.php de producción)
 
 $host     = 'localhost';
-$user     = 'u584797177_Marco';
-$password = 'Grupoexito2025@';   //
-$database = 'u584797177_dios1';
+$user     = 'root';
+$password = '';
+$database = 'dios1';
 
 try {
     $pdo = new PDO(

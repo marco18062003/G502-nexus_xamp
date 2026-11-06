@@ -1,0 +1,87 @@
+/* ============================================================
+   ofertas.css — Estilos para la página de Ofertas y Descuentos
+   Usa las mismas variables de color que buscar.css
+   ============================================================ */
+
+:root {
+    --gold: #d4af37;
+    --gold-light: #f4e5b2;
+    --gold-dark: #a8860f;
+    --black: #0d0d0d;
+    --black-soft: #1a1a1a;
+    --gray-dark: #2b2b2b;
+    --white: #ffffff;
+}
+
+/* ---------- Encabezado de la página de ofertas ---------- */
+.ofertas-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ofertas-heading i {
+    color: var(--gold);
+}
+
+/* ---------- Tarjeta de oferta ---------- */
+.oferta-card {
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
+}
+
+/* ---------- Cinta de oferta ---------- */
+.oferta-badge {
+    position: absolute;
+    top: 10px;
+    left: -6px;
+    background: linear-gradient(90deg, #c0392b, #e74c3c);
+    color: var(--white);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 5px 10px;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    z-index: 5;
+    max-width: 75%;
+}
+
+.oferta-badge::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    border-style: solid;
+    border-width: 6px 6px 0 0;
+    border-color: #8e2418 transparent transparent transparent;
+}
+
+/* ---------- Fila de precios ---------- */
+.oferta-price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.oferta-original-price {
+    font-size: 0.85rem;
+    color: var(--gray-dark);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.oferta-price {
+    margin-bottom: 0;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+    .oferta-badge {
+        font-size: 0.62rem;
+        padding: 4px 8px;
+    }
+}

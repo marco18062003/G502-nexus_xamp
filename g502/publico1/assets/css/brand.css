@@ -1,0 +1,140 @@
+/* ============================================================
+   brand.css — Sección "Marcas que manejamos" (Tema Dorado & Negro)
+   ============================================================ */
+
+:root {
+    --gold: #d4af37;
+    --gold-light: #f4e5b2;
+    --gold-dark: #a8860f;
+    --black: #0d0d0d;
+    --black-soft: #1a1a1a;
+    --white: #ffffff;
+}
+
+.brand-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    background: var(--black);
+    padding: 30px 20px;
+    border-radius: 14px;
+}
+
+.brand-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    padding: 16px 10px;
+    background: var(--black-soft);
+    border: 1px solid var(--gold-dark);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.brand-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--gold);
+    box-shadow: 0 8px 18px rgba(212, 175, 55, 0.25);
+}
+
+.brand-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    background: var(--white);
+    border-radius: 50%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 2px solid var(--gold-dark);
+    transition: border-color 0.25s ease;
+}
+
+.brand-card:hover .brand-image {
+    border-color: var(--gold);
+}
+
+.brand-name {
+    color: var(--gold-light);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.brand-card:hover .brand-name {
+    color: var(--gold);
+}
+
+/* Título de la sección */
+.text-center.mb-5.fw-bold {
+    color: var(--gold) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Mensaje cuando no hay marcas */
+.brand-container p.text-center {
+    color: var(--gold-light);
+    font-style: italic;
+}
+
+/* ---------- Responsivo ---------- */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .brand-container {
+        gap: 14px;
+        padding: 24px 14px;
+    }
+    .brand-card {
+        width: 120px;
+        padding: 14px 8px;
+    }
+    .brand-image {
+        width: 70px;
+        height: 70px;
+    }
+    .brand-name {
+        font-size: 0.82rem;
+    }
+}
+
+/* Celulares */
+@media (max-width: 576px) {
+    .brand-container {
+        gap: 10px;
+        padding: 18px 10px;
+        border-radius: 10px;
+    }
+    .brand-card {
+        width: 110px;
+        padding: 12px 8px;
+    }
+    .brand-image {
+        width: 60px;
+        height: 60px;
+    }
+    .brand-name {
+        font-size: 0.78rem;
+    }
+}
+
+/* Celulares muy pequeños */
+@media (max-width: 360px) {
+    .brand-card {
+        width: 90px;
+        padding: 10px 6px;
+    }
+    .brand-image {
+        width: 50px;
+        height: 50px;
+    }
+    .brand-name {
+        font-size: 0.7rem;
+    }
+}
