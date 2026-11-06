@@ -193,16 +193,28 @@ require_once('seguridad_admin.php');
                     <a href="mi_empresa.php"><i class="fas fa-building"></i> Factura electrónica g502</a>
                     <a href="expenses.php"><i class="fas fa-money-bill-wave"></i> Gastos</a>
                     <a href="https://donjorgito.shop/g502/plu/vencer.php"><i class="fas fa-hourglass-end"></i> Registrar a Vencer</a>
+                    <a href="expenses.php"><i class="fas fa-money-bill-wave"></i> Gastos</a>
+                    <a href="https://donjorgito.shop/g502/publico1/ofertaedit.php"><i class="fas fa-money-bill-wave"></i> Ofertas</a>
                 </div>
             </li>
 
             <li><a href="brand.php"><i class="fas fa-copyright"></i> Marcas</a></li>
             <li><a href="paymeth.php"><i class="fas fa-credit-card"></i> Pagos Medios</a></li>
-            <li><a href="admin_pedidos.php"><i class="fas fa-box-open"></i> Pedidos</a></li>
+            <li>
+                <button class="dropdown-btn"><i class="fas fa-paint-brush"></i> orden
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container">
+                    <a href="https://donjorgito.shop/g502/admin/pre-pedidos.php"><i class="fas fa-image"></i> pre-pedido</a>
+                    <a href="https://donjorgito.shop/g502/admin/admin_pedidos.php"><i class="fas fa-palette"></i> pedido</a>
+                    
+                </div>
+            </li>
             <li><a href="admin_productos.php"><i class="fas fa-tags"></i> Productos</a></li>
             <li><a href="expenses.php"><i class="fas fa-calendar-alt"></i> Próximos Cobros</a></li>
             <li><a href="../publico1/donjorgito.php"><i class="fas fa-upload"></i> Subir</a></li>
             <li><a href="subirarchivos.php"><i class="fas fa-file-upload"></i> Subir Documentos</a></li>
+            <li><a href="https://donjorgito.shop/g502/admin/revisar_comprobantes.php"><i class="fas fa-file-upload"></i> comprobantes</a></li>
             <li><a href="../publico1/index.php"><i class="fas fa-store"></i> Tienda</a></li>
             
             <li style="margin-top: 20px; border-top: 1px solid #444;">

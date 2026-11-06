@@ -56,6 +56,7 @@ $resultado = mysqli_query($conn, $sql);
     </style>
 </head>
 <body>
+    <?php include 'includes/header.php'; ?>
 <div class="container py-5">
     <h2 class="mb-4"><i class="fas fa-receipt"></i> Comprobantes de Pago (Wompi)</h2>
 

@@ -1,14 +1,13 @@
 <?php
-// Ensure session is started to check user_id
+// Ensure session is started to check user_id (Must be absolute first thing)
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
 }
 
 // Get user info if they are logged in
 $user_id = $_SESSION['user_id'] ?? null;
 $user_name = $_SESSION['nombre_usuario'] ?? 'Invitado';
 ?>
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-4 no-print">
     <div class="container">
         <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
@@ -57,5 +56,3 @@ $user_name = $_SESSION['nombre_usuario'] ?? 'Invitado';
         </div>
     </div>
 </nav>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
