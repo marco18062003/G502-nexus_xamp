@@ -7,7 +7,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Función reutilizable para mostrar notificaciones tipo "toast" ---
-    function showToast(message, type = 'success', duration = 3000) {
+    function showToast(message, type = 'success', duration = 500) {
         const container = document.getElementById('toast-container');
         if (!container) {
             console.warn('No se encontró #toast-container, usando alert como respaldo.');
